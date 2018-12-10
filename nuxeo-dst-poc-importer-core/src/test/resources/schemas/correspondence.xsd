@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/dst-nuxeo-migration/correspondence" xmlns:nxsv="http://www.nuxeo.org/ecm/schemas/core/validation/" xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/" targetNamespace="http://www.nuxeo.org/ecm/project/schemas/dst-nuxeo-migration/correspondence">  
+  <!-- helper XSD definitions for list types -->  
+  <xs:complexType name="content"> 
+    <xs:sequence> 
+      <xs:element name="encoding" type="xs:string"/>  
+      <xs:element name="mime-type" type="xs:string"/>  
+      <xs:element name="data" type="xs:base64Binary"/>  
+      <xs:element name="name" type="xs:string"/>  
+      <xs:element name="length" type="xs:long"/>  
+      <xs:element name="digest" type="xs:string"/> 
+    </xs:sequence> 
+  </xs:complexType>  
+  <xs:simpleType name="stringList"> 
+    <xs:list itemType="xs:string"/> 
+  </xs:simpleType>  
+  <xs:simpleType name="doubleList"> 
+    <xs:list itemType="xs:double"/> 
+  </xs:simpleType>  
+  <xs:simpleType name="dateList"> 
+    <xs:list itemType="xs:date"/> 
+  </xs:simpleType>  
+  <xs:simpleType name="integerList"> 
+    <xs:list itemType="xs:integer"/> 
+  </xs:simpleType>  
+  <xs:simpleType name="booleanList"> 
+    <xs:list itemType="xs:boolean"/> 
+  </xs:simpleType>  
+  <xs:complexType name="blobList"> 
+    <xs:sequence> 
+      <xs:element name="item" type="nxs:content" minOccurs="0" maxOccurs="unbounded"/> 
+    </xs:sequence> 
+  </xs:complexType>  
+  <xs:element name="SEDOL" type="xs:string"/>
+  <xs:element name="accessDate" type="xs:date"/>
+  <xs:element name="agentID" type="nxs:stringList"/>
+  <xs:element name="brand" type="xs:string"/>
+  <xs:element name="businessAssociateID" type="nxs:stringList"/>
+  <xs:element name="businessOwner" type="xs:string"/>
+  <xs:element name="configAdminOnly" default="false" type="xs:boolean"/>
+  <xs:element name="correspondenceTypeEntry" type="xs:string"/>
+  <xs:element name="deliveryMethod" type="xs:string"/>
+  <xs:element name="design" type="xs:string" nillable="false" nxsv:nillable="false"/>
+  <xs:element name="direction" default="OutBound" type="xs:string"/>
+  <xs:element name="effectiveDate" type="xs:date"/>
+  <xs:element name="eventID" type="xs:string"/>
+  <xs:element name="externalData" type="nxs:correspondence_externalDataType"/>
+  <xs:complexType name="correspondence_externalDataType">
+    <xs:sequence>
+      <xs:element name="createdDate" type="xs:date"/>
+      <xs:element name="documentID" type="xs:string"/>
+      <xs:element name="referenceID" type="xs:string"/>
+      <xs:element name="sourceSystem" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="fundInformation" type="nxs:correspondence_fundInformationType"/>
+  <xs:complexType name="correspondence_fundInformationType">
+    <xs:sequence>
+      <xs:element name="distributionDate" type="xs:date"/>
+      <xs:element name="fundName" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="hidden" default="false" nillable="false" nxsv:nillable="false" type="xs:boolean"/>
+  <xs:element name="hiddenReason" type="xs:string"/>
+  <xs:element name="importBatchID" type="xs:string"/>
+  <xs:element name="lastStateChangeDate" type="xs:date"/>
+  <xs:element name="legalOwner" type="nxs:correspondence_legalOwnerListType"/>
+  <xs:complexType name="correspondence_legalOwnerListType">
+    <xs:sequence>
+      <xs:element name="item" type="nxs:correspondence_legalOwnerType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="correspondence_legalOwnerType">
+    <xs:sequence>
+      <xs:element name="designation" type="xs:string"/>
+      <xs:element name="legalOwnerID" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="manco" type="xs:string"/>
+  <xs:element name="ownerTypeEntry" type="xs:string"/>
+  <xs:element name="pullCode" type="xs:string"/>
+  <xs:element name="recipient" type="nxs:correspondence_recipientType"/>
+  <xs:complexType name="correspondence_recipientType">
+    <xs:sequence>
+      <xs:element name="address" type="xs:string"/>
+      <xs:element name="email" type="xs:string"/>
+      <xs:element name="fax" type="xs:string"/>
+      <xs:element name="name" type="xs:string"/>
+      <xs:element name="phone" type="xs:string"/>
+      <xs:element name="postCode" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="schemeID" type="xs:string"/>
+  <xs:element name="stockedBlob" type="nxs:content"/>
+</xs:schema>

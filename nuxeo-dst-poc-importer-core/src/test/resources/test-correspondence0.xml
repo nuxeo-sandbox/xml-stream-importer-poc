@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--<correspondences>-->
+  <correspondence>
+    <title>NewCorrespondence0</title>
+    <SEDOL>A_NUM_SEDOL</SEDOL>
+    <hidden>true</hidden>
+    <design>1234</design>
+  </correspondence>
+<!--</correspondences>-->

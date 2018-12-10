@@ -17,13 +17,23 @@
  * Contributors:
  *     anechaev
  */
-package org.nuxeo.dst.importer;
+package org.nuxeo.dst.importer.common;
 
-import org.nuxeo.ecm.core.api.NuxeoException;
+public interface Constants {
 
-public class AvroDocumentException extends NuxeoException {
+    String DC_TITLE = "dc:title";
 
-    public AvroDocumentException(String message) {
-        super(message);
-    }
+    String DC_DESCRIPTION = "dc:description";
+
+    String FILE_CONTENT = "file:content";
+
+    String RECEIVED_CORRESPONDENCE = "receivedCorrespondence";
+
+    String ENABLED_STATE = "Enabled";
+
+    String DISABLED_STATE = "Disabled";
+
+    String FILE_SCHEMA = "file";
+
+    String DUBLINCORE_SCHEMA = "dublincore";
 }

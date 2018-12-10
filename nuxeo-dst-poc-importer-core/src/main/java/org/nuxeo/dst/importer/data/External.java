@@ -17,15 +17,21 @@
  * Contributors:
  *     anechaev
  */
-package org.nuxeo.dst.importer;
+package org.nuxeo.dst.importer.data;
 
-import static org.nuxeo.dst.importer.Correspondence.EXTERNAL_CREATE_DATE_PROP;
-import static org.nuxeo.dst.importer.Correspondence.EXTERNAL_SOURCE_SYSTEM_PROP;
+import static org.nuxeo.dst.importer.data.Correspondence.EXTERNAL_CREATE_DATE_PROP;
+import static org.nuxeo.dst.importer.data.Correspondence.EXTERNAL_SOURCE_SYSTEM_PROP;
 
 import java.util.Date;
 
-import org.apache.avro.reflect.Nullable;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.avro.reflect.Nullable;
+import org.nuxeo.dst.importer.annotations.Property;
+import org.nuxeo.dst.importer.annotations.PropertyClass;
+
+@XmlRootElement(name = "external")
 @PropertyClass(schema = "externalData", parent = "correspondence")
 public class External {
 
@@ -41,6 +47,7 @@ public class External {
         return sourceSystem;
     }
 
+    @XmlElement(name = "sourceSystem")
     public void setSourceSystem(String sourceSystem) {
         this.sourceSystem = sourceSystem;
     }
@@ -49,6 +56,7 @@ public class External {
         return createDate;
     }
 
+    @XmlElement(name = "createDate")
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }

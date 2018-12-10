@@ -17,7 +17,7 @@
  * Contributors:
  *     anechaev
  */
-package org.nuxeo.dst.importer;
+package org.nuxeo.dst.importer.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -25,10 +25,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.FIELD})
-public @interface PropertyClass {
+@Target(ElementType.FIELD)
+public @interface Property {
 
-    String schema();
+    String value();
 
-    String parent() default "";
+    String xmlValue() default "";
+
+    boolean required() default false;
+
+    boolean skip() default false;
 }

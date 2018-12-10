@@ -17,18 +17,22 @@
  * Contributors:
  *     anechaev
  */
-package org.nuxeo.dst.importer;
+package org.nuxeo.dst.importer.data;
 
-import java.io.Serializable;
-import java.util.Map;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
-public interface Documentable {
+@XmlRootElement(name = "correspondences")
+public class CorrespondenceList {
 
-    String getType();
+    private Correspondence[] correspondences;
 
-    String getDocumentPath();
+    public Correspondence[] getCorrespondences() {
+        return correspondences;
+    }
 
-    String getName();
-
-    Map<String, Serializable> getProperties() throws IllegalAccessException;
+    @XmlElement(name = "correspondence")
+    public void setCorrespondences(Correspondence[] correspondences) {
+        this.correspondences = correspondences;
+    }
 }

@@ -17,23 +17,18 @@
  * Contributors:
  *     anechaev
  */
-package org.nuxeo.dst.importer;
+package org.nuxeo.dst.importer.annotations;
 
-public interface Constants {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    String DC_TITLE = "dc:title";
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.FIELD})
+public @interface PropertyClass {
 
-    String DC_DESCRIPTION = "dc:description";
+    String schema();
 
-    String FILE_CONTENT = "file:content";
-
-    String RECEIVED_CORRESPONDENCE = "receivedCorrespondence";
-
-    String ENABLED_STATE = "Enabled";
-
-    String DISABLED_STATE = "Disabled";
-
-    String FILE_SCHEMA = "file";
-
-    String DUBLINCORE_SCHEMA = "dublincore";
+    String parent() default "";
 }

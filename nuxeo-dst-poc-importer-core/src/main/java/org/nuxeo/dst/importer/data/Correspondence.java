@@ -17,26 +17,34 @@
  * Contributors:
  *     anechaev
  */
-package org.nuxeo.dst.importer;
+package org.nuxeo.dst.importer.data;
 
-import static org.nuxeo.dst.importer.Constants.DC_DESCRIPTION;
-import static org.nuxeo.dst.importer.Constants.DC_TITLE;
+import static org.nuxeo.dst.importer.common.Constants.DC_DESCRIPTION;
+import static org.nuxeo.dst.importer.common.Constants.DC_TITLE;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.avro.reflect.Nullable;
 import org.apache.commons.lang.StringUtils;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+import org.nuxeo.dst.importer.annotations.Property;
+import org.nuxeo.dst.importer.annotations.PropertyClass;
+import org.nuxeo.dst.importer.exceptions.AvroDocumentException;
 import org.nuxeo.ecm.core.api.NuxeoException;
 
 @XmlRootElement(name = Correspondence.SCHEMA)
 @PropertyClass(schema = Correspondence.SCHEMA)
 public class Correspondence implements Documentable {
+
+    private static final Log log = LogFactory.getLog(Correspondence.class);
 
     public static final String SCHEMA = "correspondence";
 
@@ -66,22 +74,21 @@ public class Correspondence implements Documentable {
 
     public static final String EXTERNAL_CREATE_DATE_PROP = SCHEMA + ":createdDate";
 
-    @XmlAttribute(name = "title")
-    @Property(value = DC_TITLE, required = true)
+    @Property(value = DC_TITLE, xmlValue = "title", required = true)
     private String title;
 
     @Property(value = "path", skip = true, required = true)
     private String path;
 
     @Nullable
-    @Property(DC_DESCRIPTION)
+    @Property(value = DC_DESCRIPTION, xmlValue = "description")
     private String description;
 
-    @Property(value = DESIGN_PROP, required = true)
+    @Property(value = DESIGN_PROP, xmlValue = "design", required = true)
     private String designId;
 
     @Nullable
-    @Property(MANCO_PROP)
+    @Property(value = MANCO_PROP, xmlValue = "manco")
     private String manco;
 
     @Nullable
@@ -89,7 +96,7 @@ public class Correspondence implements Documentable {
     private String ingestMethod;
 
     @Nullable
-    @Property(AGENT_ID_PROP)
+    @Property(value = AGENT_ID_PROP, xmlValue = "agentIds")
     private String[] agentIds;
 
     @Nullable
@@ -138,7 +145,7 @@ public class Correspondence implements Documentable {
         try {
             this.getClass().getDeclaredField(field.getName()).set(this, value);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
+            log.error(e);
         }
     }
 
@@ -197,6 +204,7 @@ public class Correspondence implements Documentable {
         return title;
     }
 
+    @XmlElement(name = "title")
     public void setTitle(String title) {
         this.title = title;
     }
@@ -213,6 +221,7 @@ public class Correspondence implements Documentable {
         return description;
     }
 
+    @XmlElement(name = "description")
     public void setDescription(String description) {
         this.description = description;
     }
@@ -221,6 +230,7 @@ public class Correspondence implements Documentable {
         return designId;
     }
 
+    @XmlElement(name = "design")
     public void setDesignId(String designId) {
         this.designId = designId;
     }
@@ -229,6 +239,7 @@ public class Correspondence implements Documentable {
         return manco;
     }
 
+    @XmlElement(name = "manco")
     public void setManco(String manco) {
         this.manco = manco;
     }
@@ -237,6 +248,7 @@ public class Correspondence implements Documentable {
         return ingestMethod;
     }
 
+    @XmlElement(name = "ingestMethod")
     public void setIngestMethod(String ingestMethod) {
         this.ingestMethod = ingestMethod;
     }
@@ -245,6 +257,8 @@ public class Correspondence implements Documentable {
         return agentIds;
     }
 
+    @XmlElementWrapper(name = "agentIds")
+    @XmlElement(name = "value")
     public void setAgentIds(String[] agentIds) {
         this.agentIds = agentIds;
     }
@@ -253,6 +267,8 @@ public class Correspondence implements Documentable {
         return legalOwners;
     }
 
+    @XmlElementWrapper(name = "legalOwners")
+    @XmlElement(name = "value")
     public void setLegalOwners(List<String> legalOwners) {
         this.legalOwners = legalOwners;
     }
@@ -261,6 +277,7 @@ public class Correspondence implements Documentable {
         return businessOwner;
     }
 
+    @XmlElement(name = "businessOwner")
     public void setBusinessOwner(String businessOwner) {
         this.businessOwner = businessOwner;
     }
@@ -269,6 +286,7 @@ public class Correspondence implements Documentable {
         return entryType;
     }
 
+    @XmlElement(name = "entryType")
     public void setEntryType(String entryType) {
         this.entryType = entryType;
     }
@@ -277,6 +295,7 @@ public class Correspondence implements Documentable {
         return ownerEntryType;
     }
 
+    @XmlElement(name = "ownerEntryType")
     public void setOwnerEntryType(String ownerEntryType) {
         this.ownerEntryType = ownerEntryType;
     }
@@ -285,6 +304,7 @@ public class Correspondence implements Documentable {
         return hidden;
     }
 
+    @XmlElement(name = "hidden")
     public void setHidden(String hidden) {
         this.hidden = hidden;
     }
@@ -293,6 +313,7 @@ public class Correspondence implements Documentable {
         return hiddenReason;
     }
 
+    @XmlElement(name = "hiddenReason")
     public void setHiddenReason(String hiddenReason) {
         this.hiddenReason = hiddenReason;
     }
@@ -301,6 +322,7 @@ public class Correspondence implements Documentable {
         return external;
     }
 
+    @XmlElement(name = "external")
     public void setExternal(External external) {
         this.external = external;
     }

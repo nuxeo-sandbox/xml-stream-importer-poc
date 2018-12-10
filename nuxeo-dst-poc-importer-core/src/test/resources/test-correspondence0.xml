@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--<correspondences>-->
+<correspondences>
   <correspondence>
     <title>NewCorrespondence0</title>
     <SEDOL>A_NUM_SEDOL</SEDOL>
     <hidden>true</hidden>
     <design>1234</design>
+    <legalOwners>
+      <value>lo1</value>
+    </legalOwners>
   </correspondence>
-<!--</correspondences>-->
+  <correspondence>
+    <title>NewCorrespondence1</title>
+    <SEDOL>A_NUM_SEDOL_0</SEDOL>
+    <hidden>false</hidden>
+    <design>1234</design>
+    <agentIds>
+      <value>test1</value>
+      <value>test2</value>
+    </agentIds>
+  </correspondence>
+</correspondences>

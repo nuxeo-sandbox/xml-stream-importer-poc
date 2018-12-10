@@ -17,20 +17,13 @@
  * Contributors:
  *     anechaev
  */
-package org.nuxeo.dst.importer;
+package org.nuxeo.dst.importer.exceptions;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.nuxeo.ecm.core.api.NuxeoException;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface Property {
+public class AvroDocumentException extends NuxeoException {
 
-    String value();
-
-    boolean required() default false;
-
-    boolean skip() default false;
+    public AvroDocumentException(String message) {
+        super(message);
+    }
 }

@@ -19,30 +19,29 @@
  */
 package org.nuxeo.dst.importer.service;
 
-import static org.nuxeo.dst.importer.Correspondence.getAnnotation;
+import static org.nuxeo.dst.importer.data.Correspondence.getAnnotation;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
-import org.nuxeo.dst.importer.Correspondence;
-import org.nuxeo.dst.importer.Documentable;
-import org.nuxeo.dst.importer.Property;
-import org.nuxeo.dst.importer.PropertyClass;
+import org.nuxeo.dst.importer.data.CorrespondenceList;
+import org.nuxeo.dst.importer.data.Documentable;
+import org.nuxeo.dst.importer.annotations.PropertyClass;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.runtime.model.ComponentInstance;
 import org.nuxeo.runtime.model.DefaultComponent;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class XMLImporterComponent extends DefaultComponent implements XMLImporterService {
@@ -80,42 +79,33 @@ public class XMLImporterComponent extends DefaultComponent implements XMLImporte
 
         List<Documentable> docs = new LinkedList<>();
 
-        Document document = documentBuilder.parse(xml);
-        NodeList elements = document.getElementsByTagName(pc.schema());
-        for (int i = 0; i < elements.getLength(); i++) {
-            Element item = (Element) elements.item(i);
-            Field[] fields = adapterClass.getDeclaredFields();
-            Correspondence correspondence = new Correspondence();
-            for (Field field : fields) {
-                if (!field.isAnnotationPresent(Property.class)) {
-                    continue;
-                }
-                Property prop = field.getAnnotation(Property.class);
-                Node node = item.getElementsByTagName(prop.value()).item(0);
-                if (node == null) {
-                    continue;
-                }
-
-                String value = node.getChildNodes().item(0).getNodeValue();
-                Object converted = convert(value, field.getType());
-                correspondence.setFieldValue(field, converted);
-            }
-
-            docs.add(correspondence);
+        try {
+            JAXBContext ctx = JAXBContext.newInstance(CorrespondenceList.class);
+            Unmarshaller unmarshaller = ctx.createUnmarshaller();
+            CorrespondenceList unmarshal = (CorrespondenceList) unmarshaller.unmarshal(xml);
+            docs.addAll(Arrays.asList(unmarshal.getCorrespondences()));
+        } catch (JAXBException e) {
+            log.error(e);
         }
-
-
 
         assert !docs.isEmpty();
     }
 
     protected Object convert(String value, Class type) {
+        if (StringUtils.isEmpty(value)) {
+            return null;
+        }
+
         if (type.equals(String.class)) {
             return value;
         } else if (type.equals(Integer.class)) {
             return Integer.valueOf(value);
         } else if (type.equals(Boolean.class)) {
             return Boolean.valueOf(value);
+        } else if (type.equals(String[].class)) {
+            return Arrays.stream(value.split(","))
+                    .map(String::trim)
+                    .toArray(String[]::new);
         } else {
             return null;
         }

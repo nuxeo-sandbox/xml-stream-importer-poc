@@ -5,7 +5,7 @@
              point="configuration">
 
     <configuration>
-      <class>org.nuxeo.dst.importer.Correspondence</class>
+      <class>org.nuxeo.dst.importer.data.Correspondence</class>
     </configuration>
 
   </extension>

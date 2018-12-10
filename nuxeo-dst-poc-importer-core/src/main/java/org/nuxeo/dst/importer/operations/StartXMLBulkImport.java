@@ -1,4 +1,4 @@
-package org.nuxeo.dst.importer;
+package org.nuxeo.dst.importer.operations;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,9 +1,9 @@
 package org.nuxeo.dst.importer.operations;
 
-import java.io.File;
-import java.io.IOException;
+import javax.xml.bind.JAXBException;
 
 import org.nuxeo.dst.importer.service.XMLImporterService;
+import org.nuxeo.dst.importer.work.XMLImportWork;
 import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
@@ -11,7 +11,8 @@ import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
-import org.xml.sax.SAXException;
+import org.nuxeo.ecm.core.work.api.WorkManager;
+import org.nuxeo.runtime.api.Framework;
 
 /**
  *
@@ -34,8 +35,10 @@ public class StartXMLBulkImport {
     protected String manco;
 
     @OperationMethod
-    public DocumentModel run() throws IllegalAccessException, SAXException, IOException {
-        importerService.doImport(new File(xml));
+    public DocumentModel run() throws JAXBException {
+        WorkManager wm = Framework.getService(WorkManager.class);
+        XMLImportWork work = new XMLImportWork(session.getRepositoryName(), session.getPrincipal().getName(), manco, xml);
+        wm.schedule(work);
 
         return null;
     }

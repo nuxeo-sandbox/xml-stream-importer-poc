@@ -4,9 +4,10 @@
   <extension target="org.nuxeo.dst.importer.service.XMLImporterComponent"
              point="configuration">
 
-    <configuration>
-      <class>org.nuxeo.dst.importer.data.Correspondence</class>
-    </configuration>
+    <configuration
+            wrapperClass="org.nuxeo.dst.importer.data.CorrespondenceList"
+            class="org.nuxeo.dst.importer.data.Correspondence"
+            parent="/"/>
 
   </extension>
 

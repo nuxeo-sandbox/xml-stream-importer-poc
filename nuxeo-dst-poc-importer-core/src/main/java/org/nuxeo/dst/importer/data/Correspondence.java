@@ -24,19 +24,21 @@ import static org.nuxeo.dst.importer.common.Constants.DC_TITLE;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.avro.reflect.Nullable;
-import org.apache.commons.lang.StringUtils;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.nuxeo.dst.importer.annotations.Property;
 import org.nuxeo.dst.importer.annotations.PropertyClass;
+import org.nuxeo.dst.importer.common.DateAdapter;
 import org.nuxeo.dst.importer.exceptions.AvroDocumentException;
 import org.nuxeo.ecm.core.api.NuxeoException;
 
@@ -70,9 +72,9 @@ public class Correspondence implements Documentable {
 
     public static final String OWNER_TYPE_ENTRY_PROP = SCHEMA + ":ownerTypeEntry";
 
-    public static final String EXTERNAL_SOURCE_SYSTEM_PROP = SCHEMA + ":sourceSystem";
+    public static final String EXTERNAL_SOURCE_SYSTEM_PROP = SCHEMA + ":externalData/sourceSystem";
 
-    public static final String EXTERNAL_CREATE_DATE_PROP = SCHEMA + ":createdDate";
+    public static final String EXTERNAL_CREATE_DATE_PROP = SCHEMA + ":externalData/createdDate";
 
     @Property(value = DC_TITLE, xmlValue = "title", required = true)
     private String title;
@@ -137,6 +139,11 @@ public class Correspondence implements Documentable {
     }
 
     @Override
+    public void setDocumentPath(String path) {
+        setPath(path);
+    }
+
+    @Override
     public String getName() {
         return getTitle();
     }
@@ -153,19 +160,19 @@ public class Correspondence implements Documentable {
     public Map<String, Serializable> getProperties() throws IllegalAccessException {
         Map<String, Serializable> props = new HashMap<>();
 
-        putValues(props, getClass());
+        putValues(props, this);
 
         return props;
     }
 
-    protected void putValues(Map<String, Serializable> props, Class clazz) throws IllegalAccessException {
-        PropertyClass pc = getAnnotation(clazz);
-        Field[] fields = clazz.getDeclaredFields();
+    protected void putValues(Map<String, Serializable> props, Object object) throws IllegalAccessException {
+        PropertyClass pc = getAnnotation(object.getClass());
+        Field[] fields = object.getClass().getDeclaredFields();
 
         for (Field field : fields) {
-            Object value = field.get(this);
+            Object value = field.get(object);
             if (value != null && field.isAnnotationPresent(PropertyClass.class)) {
-                putValues(props, value.getClass());
+                putValues(props, value);
                 continue;
             }
 
@@ -178,22 +185,24 @@ public class Correspondence implements Documentable {
                 continue;
             }
 
-            value = getFieldValue(field, annotation);
-
-            props.put(buildPropertyPath(pc, annotation), (Serializable) value);
+            value = getFieldValue(field, annotation, object);
+            if (value != null) {
+                props.put(buildPropertyPath(pc, annotation), (Serializable) value);
+            }
         }
     }
 
     protected String buildPropertyPath(PropertyClass pc, Property annotation) {
-        if (StringUtils.isEmpty(pc.parent())) {
-            return pc.schema() + ":" + annotation.value();
-        }
+//        if (StringUtils.isEmpty(pc.parent())) {
+            return annotation.value();
+//        }
 
-        return pc.parent() + ":" + pc.schema() + "/" + annotation.value();
+//        return pc.parent() + ":" + pc.schema() + "/" + annotation.value();
+
     }
 
-    protected Object getFieldValue(Field field, Property annotation) throws IllegalAccessException {
-        Object value = field.get(this);
+    protected Object getFieldValue(Field field, Property annotation, Object ref) throws IllegalAccessException {
+        Object value = field.get(ref);
         if (annotation.required() && value == null) {
             throw new AvroDocumentException(annotation.value() + " cannot be empty");
         }
@@ -327,11 +336,43 @@ public class Correspondence implements Documentable {
         this.external = external;
     }
 
-    public static PropertyClass getAnnotation(Class adapterClass) {
+    private static PropertyClass getAnnotation(Class adapterClass) {
         if (!adapterClass.isAnnotationPresent(PropertyClass.class)) {
             throw new NuxeoException(adapterClass.getCanonicalName() + " is not annotated with " + PropertyClass.class.getCanonicalName());
         }
 
         return (PropertyClass) adapterClass.getAnnotation(PropertyClass.class);
+    }
+
+    @XmlRootElement(name = "external")
+    @PropertyClass(schema = "externalData", parent = "correspondence")
+    protected static class External {
+
+        @Nullable
+        @Property(EXTERNAL_SOURCE_SYSTEM_PROP)
+        protected String sourceSystem;
+
+        @Nullable
+        @Property(EXTERNAL_CREATE_DATE_PROP)
+        protected Date createDate;
+
+        public String getSourceSystem() {
+            return sourceSystem;
+        }
+
+        @XmlElement(name = "sourceSystem")
+        public void setSourceSystem(String sourceSystem) {
+            this.sourceSystem = sourceSystem;
+        }
+
+        public Date getCreateDate() {
+            return createDate;
+        }
+
+        @XmlElement(name = "createDate")
+        @XmlJavaTypeAdapter(DateAdapter.class)
+        public void setCreateDate(Date createDate) {
+            this.createDate = createDate;
+        }
     }
 }

@@ -19,15 +19,18 @@
  */
 package org.nuxeo.dst.importer;
 
+import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.List;
+import javax.xml.bind.JAXBException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.common.utils.FileUtils;
 import org.nuxeo.directory.test.DirectoryFeature;
+import org.nuxeo.dst.importer.data.Documentable;
 import org.nuxeo.dst.importer.service.XMLImporterService;
 import org.nuxeo.ecm.platform.test.PlatformFeature;
 import org.nuxeo.runtime.api.Framework;
@@ -35,7 +38,6 @@ import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 import org.nuxeo.runtime.test.runner.LocalDeploy;
-import org.xml.sax.SAXException;
 
 @RunWith(FeaturesRunner.class)
 @Features({PlatformFeature.class, DirectoryFeature.class})
@@ -50,9 +52,13 @@ public class TestXMLImportService {
     }
 
     @Test
-    public void shouldImport() throws IOException, SAXException, IllegalAccessException {
+    public void shouldImport() throws JAXBException {
         File xml = FileUtils.getResourceFileFromContext("test-correspondence0.xml");
         XMLImporterService service = Framework.getService(XMLImporterService.class);
-        service.doImport(xml);
+        List<? extends Documentable> parsed = service.parse(xml);
+        assertThat(parsed).isNotEmpty();
+        assertThat(parsed).hasSize(2);
+
+        String documentPath = parsed.get(0).getDocumentPath();
     }
 }

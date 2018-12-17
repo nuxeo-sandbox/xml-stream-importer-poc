@@ -19,20 +19,21 @@
  */
 package org.nuxeo.dst.importer.data;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "correspondences")
+@XmlRootElement(name = "list")
 public class CorrespondenceList {
 
-    private Correspondence[] correspondences;
+    private List<Correspondence> correspondences;
 
-    public Correspondence[] getCorrespondences() {
+    public List<Correspondence> getCorrespondences() {
         return correspondences;
     }
 
     @XmlElement(name = "correspondence")
-    public void setCorrespondences(Correspondence[] correspondences) {
+    public void setCorrespondences(List<Correspondence> correspondences) {
         this.correspondences = correspondences;
     }
 }

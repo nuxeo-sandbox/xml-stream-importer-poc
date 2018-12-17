@@ -26,6 +26,8 @@ public interface Documentable {
 
     String getType();
 
+    void setDocumentPath(String path);
+
     String getDocumentPath();
 
     String getName();

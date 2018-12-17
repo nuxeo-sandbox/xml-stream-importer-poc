@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<correspondences>
+<list>
   <correspondence>
     <title>NewCorrespondence0</title>
     <SEDOL>A_NUM_SEDOL</SEDOL>
     <hidden>true</hidden>
     <design>1234</design>
-    <legalOwners>
-      <value>lo1</value>
-    </legalOwners>
   </correspondence>
   <correspondence>
     <title>NewCorrespondence1</title>
@@ -18,5 +15,9 @@
       <value>test1</value>
       <value>test2</value>
     </agentIds>
+    <external>
+      <sourceSystem>Git</sourceSystem>
+      <createDate>2018-01-01</createDate>
+    </external>
   </correspondence>
-</correspondences>
+</list>

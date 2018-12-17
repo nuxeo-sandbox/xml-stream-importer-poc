@@ -20,11 +20,14 @@
 package org.nuxeo.dst.importer.service;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.List;
+import javax.xml.bind.JAXBException;
 
-import org.xml.sax.SAXException;
+import org.nuxeo.dst.importer.data.Documentable;
 
 public interface XMLImporterService {
 
-    void doImport(File xml) throws IOException, SAXException, IllegalAccessException;
+    List<? extends Documentable> parse(File xml) throws JAXBException;
+
+    String getParent();
 }

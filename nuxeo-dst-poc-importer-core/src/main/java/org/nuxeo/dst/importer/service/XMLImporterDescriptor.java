@@ -29,10 +29,24 @@ public class XMLImporterDescriptor implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @XNode("class")
+    @XNode("@wrapperClass")
+    protected Class wrapper;
+
+    @XNode("@class")
     protected Class adapterClass;
+
+    @XNode("@parent")
+    protected String parent;
 
     public Class getAdapterClass() {
         return adapterClass;
+    }
+
+    public Class getWrapperClass() {
+        return wrapper;
+    }
+
+    public String getParent() {
+        return parent;
     }
 }

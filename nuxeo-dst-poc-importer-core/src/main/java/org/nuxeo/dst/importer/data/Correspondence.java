@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -103,7 +104,7 @@ public class Correspondence implements Documentable {
 
     @Nullable
     @Property(LEGAL_OWNER_PROP)
-    private List<String> legalOwners;
+    private List<LegalOwner> legalOwners;
 
     @Nullable
     @Property(BUSINESS_OWNER_PROP)
@@ -194,7 +195,7 @@ public class Correspondence implements Documentable {
 
     protected String buildPropertyPath(PropertyClass pc, Property annotation) {
 //        if (StringUtils.isEmpty(pc.parent())) {
-            return annotation.value();
+        return annotation.value();
 //        }
 
 //        return pc.parent() + ":" + pc.schema() + "/" + annotation.value();
@@ -206,6 +207,12 @@ public class Correspondence implements Documentable {
         if (annotation.required() && value == null) {
             throw new AvroDocumentException(annotation.value() + " cannot be empty");
         }
+        if (value != null && annotation.value().contains("legalOwner")) {
+            value = ((List<LegalOwner>) value).stream()
+                    .map(lo -> lo.ownerProps)
+                    .collect(Collectors.toList());
+        }
+
         return value;
     }
 
@@ -272,13 +279,13 @@ public class Correspondence implements Documentable {
         this.agentIds = agentIds;
     }
 
-    public List<String> getLegalOwners() {
+    public List<LegalOwner> getLegalOwners() {
         return legalOwners;
     }
 
-    @XmlElementWrapper(name = "legalOwners")
-    @XmlElement(name = "value")
-    public void setLegalOwners(List<String> legalOwners) {
+    //    @XmlElementWrapper(name = "legalOwners")
+    @XmlElement(name = "legalOwner")
+    public void setLegalOwners(List<LegalOwner> legalOwners) {
         this.legalOwners = legalOwners;
     }
 
@@ -343,6 +350,44 @@ public class Correspondence implements Documentable {
 
         return (PropertyClass) adapterClass.getAnnotation(PropertyClass.class);
     }
+
+    @XmlRootElement(name = "legalOwner")
+    @PropertyClass(schema = "legalOwner", parent = "correspondence")
+    protected static class LegalOwner {
+
+        @Nullable
+//        @Property(LEGAL_OWNER_PROP + "/0/designation")
+        protected String designation;
+
+        @Nullable
+//        @Property(LEGAL_OWNER_PROP + "/0/legalOwnerID")
+        protected String legalOwnerID;
+
+        @Nullable
+        @Property(LEGAL_OWNER_PROP)
+        protected Map<String, String> ownerProps = new HashMap<>();
+
+        public String getDesignation() {
+            return designation;
+        }
+
+        @XmlElement(name = "designation")
+        public void setDesignation(String designation) {
+            ownerProps.put("designation", designation);
+            this.designation = designation;
+        }
+
+        public String getLegalOwnerID() {
+            return legalOwnerID;
+        }
+
+        @XmlElement(name = "legalOwnerID")
+        public void setLegalOwnerID(String legalOwnerID) {
+            ownerProps.put("legalOwnerID", legalOwnerID);
+            this.legalOwnerID = legalOwnerID;
+        }
+    }
+
 
     @XmlRootElement(name = "external")
     @PropertyClass(schema = "externalData", parent = "correspondence")

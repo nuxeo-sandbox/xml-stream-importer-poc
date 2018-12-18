@@ -34,8 +34,12 @@ public class StartXMLBulkImport {
     @Param(name = "manco")
     protected String manco;
 
+//    @Param(name = "uuid")
+//    protected String uuid;
+
     @OperationMethod
     public DocumentModel run() throws JAXBException {
+        // TODO: create uuid to track import
         WorkManager wm = Framework.getService(WorkManager.class);
         XMLImportWork work = new XMLImportWork(session.getRepositoryName(), session.getPrincipal().getName(), manco, xml);
         wm.schedule(work);

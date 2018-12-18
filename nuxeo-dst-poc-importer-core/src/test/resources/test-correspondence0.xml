@@ -5,6 +5,14 @@
     <SEDOL>A_NUM_SEDOL</SEDOL>
     <hidden>true</hidden>
     <design>1234</design>
+    <legalOwner>
+      <designation>lo1</designation>
+      <legalOwnerID>lo1ID</legalOwnerID>
+    </legalOwner>
+    <legalOwner>
+      <designation>lo2</designation>
+      <legalOwnerID>lo2ID</legalOwnerID>
+    </legalOwner>
   </correspondence>
   <correspondence>
     <title>NewCorrespondence1</title>

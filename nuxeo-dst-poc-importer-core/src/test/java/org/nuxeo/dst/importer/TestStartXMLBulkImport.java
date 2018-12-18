@@ -9,6 +9,7 @@ import static org.nuxeo.dst.importer.data.Correspondence.EXTERNAL_SOURCE_SYSTEM_
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
@@ -16,6 +17,7 @@ import javax.inject.Inject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.common.utils.FileUtils;
+import org.nuxeo.dst.importer.data.Correspondence;
 import org.nuxeo.dst.importer.operations.StartXMLBulkImport;
 import org.nuxeo.ecm.automation.AutomationService;
 import org.nuxeo.ecm.automation.OperationContext;
@@ -82,6 +84,10 @@ public class TestStartXMLBulkImport {
 
         String design = (String) doc0.getPropertyValue(DESIGN_PROP);
         assertEquals(design, "1234");
+
+        @SuppressWarnings("unchecked")
+        List<Object> owners = (List<Object>) doc0.getPropertyValue(Correspondence.LEGAL_OWNER_PROP);
+        assertThat(owners).hasSize(2);
 
         DocumentModel doc1 = session.getDocument(new PathRef("/" + mancoTest + "/NewCorrespondence1"));
         assertNotNull(doc1);

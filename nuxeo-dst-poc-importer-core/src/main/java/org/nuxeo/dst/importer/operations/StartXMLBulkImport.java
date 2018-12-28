@@ -28,6 +28,7 @@ public class StartXMLBulkImport {
     @Context
     protected XMLImporterService importerService;
 
+    // TODO: change to `location`
     @Param(name = "xml")
     protected String xml;
 

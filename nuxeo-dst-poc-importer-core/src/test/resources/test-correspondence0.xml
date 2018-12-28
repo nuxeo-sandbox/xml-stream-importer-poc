@@ -4,7 +4,7 @@
     <title>NewCorrespondence0</title>
     <SEDOL>A_NUM_SEDOL</SEDOL>
     <hidden>true</hidden>
-    <design>1234</design>
+    <design>Awesome</design>
     <legalOwner>
       <designation>lo1</designation>
       <legalOwnerID>lo1ID</legalOwnerID>
@@ -13,12 +13,13 @@
       <designation>lo2</designation>
       <legalOwnerID>lo2ID</legalOwnerID>
     </legalOwner>
+    <!--<content>*/**/*.pdf</content>-->
   </correspondence>
   <correspondence>
     <title>NewCorrespondence1</title>
     <SEDOL>A_NUM_SEDOL_0</SEDOL>
     <hidden>false</hidden>
-    <design>1234</design>
+    <design>Awesome</design>
     <agentIds>
       <value>test1</value>
       <value>test2</value>

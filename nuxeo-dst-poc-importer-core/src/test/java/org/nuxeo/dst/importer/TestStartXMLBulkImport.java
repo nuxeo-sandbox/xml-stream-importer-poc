@@ -83,7 +83,7 @@ public class TestStartXMLBulkImport {
         assertNotNull(doc0);
 
         String design = (String) doc0.getPropertyValue(DESIGN_PROP);
-        assertEquals(design, "1234");
+        assertEquals("Awesome", design);
 
         @SuppressWarnings("unchecked")
         List<Object> owners = (List<Object>) doc0.getPropertyValue(Correspondence.LEGAL_OWNER_PROP);
@@ -97,5 +97,11 @@ public class TestStartXMLBulkImport {
 
         String srcSys = (String) doc1.getPropertyValue(EXTERNAL_SOURCE_SYSTEM_PROP);
         assertEquals("Git", srcSys);
+    }
+
+    @Test
+    public void shouldCommitOnMultiple() throws InterruptedException, OperationException {
+        shouldCallWithParameters();
+        shouldCallWithParameters();
     }
 }

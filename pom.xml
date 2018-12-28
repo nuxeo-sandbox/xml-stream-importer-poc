@@ -16,6 +16,7 @@
 
   <modules>
     <module>nuxeo-dst-poc-importer-core</module>
+    <module>nuxeo-dst-poc-importer-package</module>
   </modules>
 
   <properties>
@@ -43,6 +44,11 @@
         <groupId>org.apache.avro</groupId>
         <artifactId>avro-maven-plugin</artifactId>
         <version>${nuxeo.avro.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.nuxeo.dst.importer</groupId>
+        <artifactId>nuxeo-dst-poc-importer-package</artifactId>
+        <version>${project.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

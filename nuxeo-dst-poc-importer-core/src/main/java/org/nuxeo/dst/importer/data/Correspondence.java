@@ -21,6 +21,7 @@ package org.nuxeo.dst.importer.data;
 
 import static org.nuxeo.dst.importer.common.Constants.DC_DESCRIPTION;
 import static org.nuxeo.dst.importer.common.Constants.DC_TITLE;
+import static org.nuxeo.dst.importer.common.Constants.FILE_CONTENT;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -71,6 +72,8 @@ public class Correspondence implements Documentable {
 
     public static final String LEGAL_OWNER_PROP = SCHEMA + ":legalOwner";
 
+    public static final String SEDOL_PROP = SCHEMA + ":SEDOL";
+
     public static final String OWNER_TYPE_ENTRY_PROP = SCHEMA + ":ownerTypeEntry";
 
     public static final String EXTERNAL_SOURCE_SYSTEM_PROP = SCHEMA + ":externalData/sourceSystem";
@@ -93,6 +96,10 @@ public class Correspondence implements Documentable {
     @Nullable
     @Property(value = MANCO_PROP, xmlValue = "manco")
     private String manco;
+
+    @Nullable
+    @Property(value = FILE_CONTENT)
+    private String content;
 
     @Nullable
     @Property(INGEST_METHOD_PROP)
@@ -124,6 +131,10 @@ public class Correspondence implements Documentable {
     @Nullable
     @Property(HIDDEN_REASON_PROP)
     private String hiddenReason;
+
+    @Nullable
+    @Property(SEDOL_PROP)
+    private String sedol;
 
     @Nullable
     @PropertyClass(schema = "externalData")
@@ -260,6 +271,15 @@ public class Correspondence implements Documentable {
         this.manco = manco;
     }
 
+    public String getContent() {
+        return content;
+    }
+
+    @XmlElement(name = "content")
+    public void setContent(String content) {
+        this.content = content;
+    }
+
     public String getIngestMethod() {
         return ingestMethod;
     }
@@ -271,6 +291,15 @@ public class Correspondence implements Documentable {
 
     public String[] getAgentIds() {
         return agentIds;
+    }
+
+    public String getSedol() {
+        return sedol;
+    }
+
+    @XmlElement(name = "SEDOL")
+    public void setSedol(String sedol) {
+        this.sedol = sedol;
     }
 
     @XmlElementWrapper(name = "agentIds")

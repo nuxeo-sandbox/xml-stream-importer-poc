@@ -19,6 +19,8 @@
  */
 package org.nuxeo.dst.importer.work;
 
+import static org.nuxeo.dst.importer.common.Constants.FILE_CONTENT;
+
 import java.io.Externalizable;
 import java.io.File;
 import java.io.IOException;
@@ -63,7 +65,7 @@ public class XMLImportWork extends AbstractWork {
     private final String filePath;
 
     public XMLImportWork(String repo, String user, String manco, String filePath) {
-        super(filePath);
+        super();
 
         Objects.requireNonNull(repo);
         Objects.requireNonNull(manco);
@@ -98,9 +100,9 @@ public class XMLImportWork extends AbstractWork {
         StreamService ss = Framework.getService(StreamService.class);
         LogManager logger = ss.getLogManager("default");
 
-        logger.createIfNotExists(manco, 2);
+        logger.createIfNotExists(id + "_" + manco, 2);
 
-        LogAppender<Record> appender = logger.getAppender(manco);
+        LogAppender<Record> appender = logger.getAppender(id + "_" + manco);
 
         Class<? extends Documentable> aClass = docs.get(0).getClass();
         Schema schema = ReflectData.get().getSchema(aClass);
@@ -124,7 +126,9 @@ public class XMLImportWork extends AbstractWork {
     private void consume(LogManager logger, Schema schema) {
         XMLImporterService importerService = Framework.getService(XMLImporterService.class);
         RawMessageDecoder<Object> decoder = new RawMessageDecoder<>(ReflectData.get(), schema);
-        LogTailer<Externalizable> tailer = logger.createTailer("default", manco);
+        LogTailer<Externalizable> tailer = logger.createTailer(id, id + "_" + manco);
+        tailer.toLastCommitted();
+
         Exception finalEx = null;
         try {
             openUserSession();
@@ -147,7 +151,7 @@ public class XMLImportWork extends AbstractWork {
                         @SuppressWarnings("unchecked")
                         Map<String, Serializable> map = (Map<String, Serializable>) value;
                         propagateComplex(map, doc);
-                    } else if ("file:content".equals(name)) {
+                    } else if (FILE_CONTENT.equals(name)) {
                         File bin = new File((String) value);
                         if (!bin.exists()) {
                             log.error("Binary at " + value + "does not exist");
@@ -161,7 +165,12 @@ public class XMLImportWork extends AbstractWork {
                         doc.setPropertyValue(name, value);
                     }
                 }
-                session.createDocument(doc);
+
+                try {
+                    session.createDocument(doc);
+                } catch (NuxeoException e) {
+                    log.error("An error occurred during import; Continuing the process", e);
+                }
             } while (record != null);
 
         } catch (InterruptedException | IllegalAccessException | IOException e) {
@@ -169,7 +178,10 @@ public class XMLImportWork extends AbstractWork {
             finalEx = e;
         } finally {
             boolean ok = finalEx == null;
+            session.save();
             cleanUp(ok, finalEx);
+            tailer.commit();
+            tailer.close();
         }
     }
 

@@ -24,7 +24,10 @@ import static org.nuxeo.dst.importer.common.Constants.FILE_CONTENT;
 import java.io.Externalizable;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.util.List;
@@ -36,8 +39,10 @@ import org.apache.avro.Schema;
 import org.apache.avro.message.RawMessageDecoder;
 import org.apache.avro.message.RawMessageEncoder;
 import org.apache.avro.reflect.ReflectData;
+import org.apache.commons.lang.StringUtils;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
+import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.nuxeo.dst.importer.data.Documentable;
 import org.nuxeo.dst.importer.service.XMLImporterService;
 import org.nuxeo.ecm.core.api.Blob;
@@ -53,6 +58,8 @@ import org.nuxeo.lib.stream.log.LogRecord;
 import org.nuxeo.lib.stream.log.LogTailer;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.stream.StreamService;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class XMLImportWork extends AbstractWork {
 
@@ -81,6 +88,7 @@ public class XMLImportWork extends AbstractWork {
     public void work() {
         File file = new File(filePath);
         if (!file.exists()) {
+            sendNotification(404, filePath + " does not exist");
             throw new NuxeoException(filePath + " does not exist");
         }
 
@@ -90,10 +98,12 @@ public class XMLImportWork extends AbstractWork {
             docs = importerService.parse(file);
             if (docs.isEmpty()) {
                 log.info("nothing to process");
+                sendNotification(400, "nothing to process");
                 return;
             }
         } catch (JAXBException e) {
             log.error(e);
+            sendNotification(400, e.getMessage());
             throw new NuxeoException(e);
         }
 
@@ -155,6 +165,7 @@ public class XMLImportWork extends AbstractWork {
                         File bin = new File((String) value);
                         if (!bin.exists()) {
                             log.error("Binary at " + value + "does not exist");
+                            sendNotification(102, "Binary at " + value + "does not exist");
                             continue;
                         }
 
@@ -170,6 +181,7 @@ public class XMLImportWork extends AbstractWork {
                     session.createDocument(doc);
                 } catch (NuxeoException e) {
                     log.error("An error occurred during import; Continuing the process", e);
+                    sendNotification(101, "An error occurred during import; Continuing the process");
                 }
             } while (record != null);
 
@@ -195,6 +207,70 @@ public class XMLImportWork extends AbstractWork {
             String name = entry.getKey();
             Serializable value = entry.getValue();
             doc.setPropertyValue(name, value);
+        }
+    }
+
+    protected void sendNotification(int code, String message) {
+
+        Response response = new Response(code, message);
+
+        String callback = Framework.getProperties().getProperty("nuxeo.importer.callback.url");
+        if (StringUtils.isEmpty(callback)) {
+            log.error("Could not send a notification to an external API. `nuxeo.importer.callback.url` is empty.");
+            return;
+        }
+
+        try {
+            URL url = new URL(callback);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod(HttpMethod.POST.getName());
+            conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+
+            send(response, conn);
+        } catch (IOException e) {
+            log.error("Could not send a notification to an external API", e);
+        }
+
+    }
+
+    private void send(Response response, HttpURLConnection conn) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        try (OutputStream os = conn.getOutputStream()) {
+            byte[] outStr = mapper.writeValueAsString(response).getBytes();
+            conn.setFixedLengthStreamingMode(outStr.length);
+            os.write(outStr);
+        }
+    }
+
+    public static class Response {
+
+        private int code;
+
+        private String message;
+
+        public Response() {
+
+        }
+
+        public Response(int code, String message) {
+            this.code = code;
+            this.message = message;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public void setCode(int code) {
+            this.code = code;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
         }
     }
 }

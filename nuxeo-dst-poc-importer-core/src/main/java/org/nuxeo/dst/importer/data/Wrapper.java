@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2006-2018 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2006-2019 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,20 +20,8 @@
 package org.nuxeo.dst.importer.data;
 
 import java.util.List;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "list")
-public class WrapperList {
+public interface Wrapper {
 
-    private List<Correspondence> list;
-
-    public List<Correspondence> getList() {
-        return list;
-    }
-
-    @XmlElement(name = "correspondence")
-    public void setList(List<Correspondence> list) {
-        this.list = list;
-    }
+    List<? extends Documentable>  getList();
 }

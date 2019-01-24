@@ -27,10 +27,13 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
-import org.nuxeo.dst.importer.data.WrapperList;
 import org.nuxeo.dst.importer.data.Documentable;
+import org.nuxeo.dst.importer.data.Wrapper;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.runtime.model.ComponentInstance;
 import org.nuxeo.runtime.model.DefaultComponent;
+
+import com.google.common.collect.Sets;
 
 public class XMLImporterComponent extends DefaultComponent implements XMLImporterService {
 
@@ -50,11 +53,13 @@ public class XMLImporterComponent extends DefaultComponent implements XMLImporte
     @Override
     public List<? extends Documentable> parse(File xml) throws JAXBException {
         Class wrapper = descriptor.getWrapperClass();
+        if (!Sets.newHashSet(wrapper.getInterfaces()).contains(Wrapper.class)) {
+            throw new NuxeoException("Container must conform to " + Wrapper.class.getCanonicalName() + " interface");
+        }
+
         JAXBContext ctx = JAXBContext.newInstance(wrapper);
         Unmarshaller unmarshaller = ctx.createUnmarshaller();
-//        unmarshaller.setSchema(ReflectData.get().getSchema(wrapper));
-        // TODO: remove this weird magic in favor of truly dynamic resolution | introduce wrappable interface
-        WrapperList unmarshal = (WrapperList) wrapper.cast(unmarshaller.unmarshal(xml));
+        Wrapper unmarshal = (Wrapper) wrapper.cast(unmarshaller.unmarshal(xml));
 
         return unmarshal.getList();
     }

@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0
 Bundle-Name: nuxeo-dst-poc-importer-core
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.nuxeo.dst.importer.nuxeo-dst-poc-importer-core;singleton=true
-Nuxeo-Component: OSGI-INF/scan-xml-def-contrib.xml,
+Nuxeo-Component: OSGI-INF/external-notification-service-contrib.xml,
+ OSGI-INF/scan-xml-def-contrib.xml,
  OSGI-INF/xml-importer-service.xml,
  OSGI-INF/startxmlbulkimport-operation-contrib.xml

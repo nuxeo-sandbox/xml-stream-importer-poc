@@ -3,7 +3,7 @@ package org.nuxeo.dst.importer.operations;
 import javax.xml.bind.JAXBException;
 
 import org.nuxeo.dst.importer.service.XMLImporterService;
-import org.nuxeo.dst.importer.work.XMLImportWork;
+import org.nuxeo.dst.importer.work.XMLProducerWork;
 import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
@@ -42,7 +42,7 @@ public class StartXMLBulkImport {
     public DocumentModel run() throws JAXBException {
         // TODO: create uuid to track import
         WorkManager wm = Framework.getService(WorkManager.class);
-        XMLImportWork work = new XMLImportWork(session.getRepositoryName(), session.getPrincipal().getName(), manco, xml);
+        XMLProducerWork work = new XMLProducerWork(session.getRepositoryName(), session.getPrincipal().getName(), manco, xml);
         wm.schedule(work);
 
         return null;

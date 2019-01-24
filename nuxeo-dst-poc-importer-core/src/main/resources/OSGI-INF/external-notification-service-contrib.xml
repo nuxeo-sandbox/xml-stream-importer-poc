@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.dst.importer.notification.service">
+
+  <service>
+    <provide interface="org.nuxeo.dst.importer.service.NotificationService" />
+  </service>
+
+  <implementation class="org.nuxeo.dst.importer.service.NotificationServiceImpl" />
+
+</component>
+

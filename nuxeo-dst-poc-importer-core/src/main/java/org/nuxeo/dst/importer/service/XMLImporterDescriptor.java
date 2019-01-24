@@ -23,6 +23,7 @@ import java.io.Serializable;
 
 import org.nuxeo.common.xmap.annotation.XNode;
 import org.nuxeo.common.xmap.annotation.XObject;
+import org.nuxeo.dst.importer.data.Wrapper;
 
 @XObject("configuration")
 public class XMLImporterDescriptor implements Serializable {
@@ -30,19 +31,13 @@ public class XMLImporterDescriptor implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @XNode("@wrapperClass")
-    protected Class wrapper;
-
-    @XNode("@class")
-    protected Class adapterClass;
+    protected Class<Wrapper> wrapper;
 
     @XNode("@parent")
     protected String parent;
 
-    public Class getAdapterClass() {
-        return adapterClass;
-    }
 
-    public Class getWrapperClass() {
+    public Class<Wrapper> getWrapperClass() {
         return wrapper;
     }
 

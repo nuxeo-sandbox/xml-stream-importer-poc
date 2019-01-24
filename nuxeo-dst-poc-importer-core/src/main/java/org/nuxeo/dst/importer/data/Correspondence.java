@@ -41,8 +41,7 @@ import org.apache.juli.logging.LogFactory;
 import org.nuxeo.dst.importer.annotations.Property;
 import org.nuxeo.dst.importer.annotations.PropertyClass;
 import org.nuxeo.dst.importer.common.DateAdapter;
-import org.nuxeo.dst.importer.exceptions.AvroDocumentException;
-import org.nuxeo.ecm.core.api.NuxeoException;
+import org.nuxeo.dst.importer.exceptions.MissingFieldException;
 
 @XmlRootElement(name = Correspondence.SCHEMA)
 @PropertyClass(schema = Correspondence.SCHEMA)
@@ -80,21 +79,21 @@ public class Correspondence implements Documentable {
 
     public static final String EXTERNAL_CREATE_DATE_PROP = SCHEMA + ":externalData/createdDate";
 
-    @Property(value = DC_TITLE, xmlValue = "title", required = true)
+    @Property(value = DC_TITLE, required = true)
     private String title;
 
     @Property(value = "path", skip = true, required = true)
     private String path;
 
     @Nullable
-    @Property(value = DC_DESCRIPTION, xmlValue = "description")
+    @Property(value = DC_DESCRIPTION)
     private String description;
 
-    @Property(value = DESIGN_PROP, xmlValue = "design", required = true)
+    @Property(value = DESIGN_PROP, required = true)
     private String designId;
 
     @Nullable
-    @Property(value = MANCO_PROP, xmlValue = "manco")
+    @Property(value = MANCO_PROP)
     private String manco;
 
     @Nullable
@@ -106,7 +105,7 @@ public class Correspondence implements Documentable {
     private String ingestMethod;
 
     @Nullable
-    @Property(value = AGENT_ID_PROP, xmlValue = "agentIds")
+    @Property(value = AGENT_ID_PROP)
     private String[] agentIds;
 
     @Nullable
@@ -169,7 +168,7 @@ public class Correspondence implements Documentable {
     }
 
     @Override
-    public Map<String, Serializable> getProperties() throws IllegalAccessException {
+    public Map<String, Serializable> getProperties() throws IllegalAccessException, MissingFieldException {
         Map<String, Serializable> props = new HashMap<>();
 
         putValues(props, this);
@@ -177,8 +176,7 @@ public class Correspondence implements Documentable {
         return props;
     }
 
-    protected void putValues(Map<String, Serializable> props, Object object) throws IllegalAccessException {
-        PropertyClass pc = getAnnotation(object.getClass());
+    protected void putValues(Map<String, Serializable> props, Object object) throws IllegalAccessException, MissingFieldException {
         Field[] fields = object.getClass().getDeclaredFields();
 
         for (Field field : fields) {
@@ -199,24 +197,16 @@ public class Correspondence implements Documentable {
 
             value = getFieldValue(field, annotation, object);
             if (value != null) {
-                props.put(buildPropertyPath(pc, annotation), (Serializable) value);
+                props.put(annotation.value(), (Serializable) value);
             }
         }
     }
 
-    protected String buildPropertyPath(PropertyClass pc, Property annotation) {
-//        if (StringUtils.isEmpty(pc.parent())) {
-        return annotation.value();
-//        }
-
-//        return pc.parent() + ":" + pc.schema() + "/" + annotation.value();
-
-    }
-
-    protected Object getFieldValue(Field field, Property annotation, Object ref) throws IllegalAccessException {
+    @SuppressWarnings("unchecked")
+    protected Object getFieldValue(Field field, Property annotation, Object ref) throws IllegalAccessException, MissingFieldException {
         Object value = field.get(ref);
         if (annotation.required() && value == null) {
-            throw new AvroDocumentException(annotation.value() + " cannot be empty");
+            throw new MissingFieldException(annotation.value() + " cannot be empty", field.getName());
         }
         if (value != null && annotation.value().contains("legalOwner")) {
             value = ((List<LegalOwner>) value).stream()
@@ -370,14 +360,6 @@ public class Correspondence implements Documentable {
     @XmlElement(name = "external")
     public void setExternal(External external) {
         this.external = external;
-    }
-
-    private static PropertyClass getAnnotation(Class adapterClass) {
-        if (!adapterClass.isAnnotationPresent(PropertyClass.class)) {
-            throw new NuxeoException(adapterClass.getCanonicalName() + " is not annotated with " + PropertyClass.class.getCanonicalName());
-        }
-
-        return (PropertyClass) adapterClass.getAnnotation(PropertyClass.class);
     }
 
     @XmlRootElement(name = "legalOwner")

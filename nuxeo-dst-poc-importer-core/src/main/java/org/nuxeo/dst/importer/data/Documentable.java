@@ -22,6 +22,8 @@ package org.nuxeo.dst.importer.data;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.nuxeo.dst.importer.exceptions.MissingFieldException;
+
 public interface Documentable {
 
     String getType();
@@ -32,5 +34,5 @@ public interface Documentable {
 
     String getName();
 
-    Map<String, Serializable> getProperties() throws IllegalAccessException;
+    Map<String, Serializable> getProperties() throws IllegalAccessException, MissingFieldException;
 }

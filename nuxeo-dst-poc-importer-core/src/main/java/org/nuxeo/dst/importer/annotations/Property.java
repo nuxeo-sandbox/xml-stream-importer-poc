@@ -30,8 +30,6 @@ public @interface Property {
 
     String value();
 
-    String xmlValue() default "";
-
     boolean required() default false;
 
     boolean skip() default false;

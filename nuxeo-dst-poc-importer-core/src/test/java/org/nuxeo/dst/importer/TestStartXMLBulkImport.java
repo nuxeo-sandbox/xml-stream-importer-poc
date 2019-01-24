@@ -55,6 +55,8 @@ public class TestStartXMLBulkImport {
 
     @Test
     public void shouldCallWithParameters() throws OperationException, InterruptedException {
+        Framework.getProperties().put("nuxeo.importer.callback.url", "http://localhost");
+
         String mancoTest = "mancoTest";
         DocumentModel parent = session.createDocumentModel("/", mancoTest, "Folder");
         parent.setPropertyValue("dc:title", mancoTest);

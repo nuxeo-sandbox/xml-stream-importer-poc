@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Paths;
 import java.time.Duration;
+import java.util.Collections;
+import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 
@@ -37,6 +39,7 @@ import org.apache.avro.reflect.ReflectData;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.dst.importer.data.Documentable;
+import org.nuxeo.dst.importer.exceptions.MissingFieldException;
 import org.nuxeo.dst.importer.service.NotificationService;
 import org.nuxeo.dst.importer.service.XMLImporterService;
 import org.nuxeo.ecm.core.api.Blob;
@@ -44,12 +47,15 @@ import org.nuxeo.ecm.core.api.Blobs;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.work.AbstractWork;
+import org.nuxeo.ecm.platform.audit.api.AuditLogger;
+import org.nuxeo.ecm.platform.audit.api.LogEntry;
 import org.nuxeo.lib.stream.computation.Record;
 import org.nuxeo.lib.stream.log.LogManager;
 import org.nuxeo.lib.stream.log.LogRecord;
 import org.nuxeo.lib.stream.log.LogTailer;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.stream.StreamService;
+import org.nuxeo.runtime.transaction.TransactionHelper;
 
 public class XMLConsumerWork extends AbstractWork {
 
@@ -58,6 +64,8 @@ public class XMLConsumerWork extends AbstractWork {
     public static final String XML_STREAM_CONSUMER_WORK = "XMLConsumerWork";
 
     public static final int DEFAULT_COMMIT_SIZE = 128;
+
+    private AuditLogger logger;
 
     private String manco;
 
@@ -102,10 +110,13 @@ public class XMLConsumerWork extends AbstractWork {
         tailer.toLastCommitted();
 
         Exception finalEx = null;
+
+        int successCounter = 0;
+        int failureCounter = 0;
+
+        NotificationService ns = Framework.getService(NotificationService.class);
         try {
             openUserSession();
-
-            NotificationService ns = Framework.getService(NotificationService.class);
 
             int counter = 0;
             LogRecord<Externalizable> record;
@@ -121,16 +132,22 @@ public class XMLConsumerWork extends AbstractWork {
                 Documentable decoded = (Documentable) decoder.decode(message.data);
 
                 DocumentModel doc = session.createDocumentModel(path, decoded.getName(), decoded.getType());
-                propagateProperties(ns, decoded, doc);
 
                 try {
+                    propagateProperties(ns, decoded, doc);
                     session.createDocument(doc);
-                } catch (NuxeoException e) {
+                } catch (MissingFieldException | NuxeoException e) {
                     log.error("An error occurred during import; Continuing the process", e);
                     ns.send(101, "An error occurred during import; Continuing the process");
+                    counter++;
+                    failureCounter += counter;
+                    counter = 0;
+                    rollback();
+                    continue;
                 }
 
                 counter++;
+                successCounter++;
                 if (counter >= DEFAULT_COMMIT_SIZE) {
                     session.save();
                     tailer.commit();
@@ -147,10 +164,21 @@ public class XMLConsumerWork extends AbstractWork {
             cleanUp(ok, finalEx);
             tailer.commit();
             tailer.close();
+
+            String message = "Successfully imported: " + successCounter + " Documents; " + failureCounter + " failed";
+            log.info(message);
+            ns.send(200, message);
+            addAudit(message);
         }
     }
 
-    protected void propagateProperties(NotificationService ns, Documentable decoded, DocumentModel doc) throws IllegalAccessException, IOException {
+    private void rollback() {
+        TransactionHelper.setTransactionRollbackOnly();
+        TransactionHelper.commitOrRollbackTransaction();
+        TransactionHelper.startTransaction();
+    }
+
+    protected void propagateProperties(NotificationService ns, Documentable decoded, DocumentModel doc) throws IllegalAccessException, IOException, MissingFieldException {
         Map<String, Serializable> props = decoded.getProperties();
         for (Map.Entry<String, Serializable> entry : props.entrySet()) {
             String name = entry.getKey();
@@ -182,5 +210,31 @@ public class XMLConsumerWork extends AbstractWork {
             Serializable value = entry.getValue();
             doc.setPropertyValue(name, value);
         }
+    }
+
+    protected void addAudit(String reason) {
+        AuditLogger l = getLogger();
+        if (l == null) {
+            log.debug("Audit disabled");
+            return;
+        }
+
+        LogEntry entry = l.newLogEntry();
+        entry.setPrincipalName(originatingUsername);
+        entry.setEventId("Import");
+        entry.setEventDate(new Date());
+        entry.setCategory("Document");
+        entry.setComment(reason);
+
+        l.addLogEntries(Collections.singletonList(entry));
+    }
+
+    private AuditLogger getLogger() {
+        if (logger == null) {
+            logger = Framework.getService(AuditLogger.class);
+            return logger;
+        }
+
+        return logger;
     }
 }

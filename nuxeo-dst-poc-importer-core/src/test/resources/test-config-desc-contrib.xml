@@ -5,7 +5,7 @@
              point="configuration">
 
     <configuration
-            wrapperClass="org.nuxeo.dst.importer.data.CorrespondenceList"
+            wrapperClass="org.nuxeo.dst.importer.data.WrapperList"
             class="org.nuxeo.dst.importer.data.Correspondence"
             parent="/"/>
 

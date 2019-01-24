@@ -82,8 +82,9 @@ public class XMLProducerWork extends AbstractWork {
         }
 
         XMLImporterService importerService = Framework.getService(XMLImporterService.class);
+        String mancoPath = Paths.get(importerService.getParent(), manco).toString();
 
-        checkManco(ns, importerService);
+        checkManco(ns, mancoPath);
 
         List<? extends Documentable> docs;
         try {
@@ -99,29 +100,34 @@ public class XMLProducerWork extends AbstractWork {
             throw new NuxeoException(e);
         }
 
-        StreamService ss = Framework.getService(StreamService.class);
-        LogManager logger = ss.getLogManager("default");
-
         String logName = id + "_" + manco;
 
-        logger.createIfNotExists(logName, 2);
+        LogAppender<Record> appender;
+        try {
+            StreamService ss = Framework.getService(StreamService.class);
+            LogManager logger = ss.getLogManager("default");
 
-        LogAppender<Record> appender = logger.getAppender(logName);
+            logger.createIfNotExists(logName, 2);
+            appender = logger.getAppender(logName);
+        } catch (Exception e) {
+            ns.send(500, "Cannot connect to Nuxeo Stream");
+            throw new NuxeoException(e);
+        }
 
         Class<? extends Documentable> aClass = docs.get(0).getClass();
         Schema schema = ReflectData.get().getSchema(aClass);
 
         RawMessageEncoder<Object> encoder = new RawMessageEncoder<>(ReflectData.get(), schema);
 
-
         for (Documentable doc : docs) {
-            doc.setDocumentPath(manco);
+            doc.setDocumentPath(mancoPath);
 
             try {
                 ByteBuffer buf = encoder.encode(doc);
                 LogOffset offset = appender.append(doc.getName(), Record.of(doc.getName(), buf.array()));
             } catch (IOException e) {
                 log.error(e);
+                ns.send(400, e.getMessage());
             }
         }
 
@@ -140,8 +146,7 @@ public class XMLProducerWork extends AbstractWork {
         return XML_IMPORTER_CATEGORY;
     }
 
-    protected void checkManco(NotificationService ns, XMLImporterService importerService) {
-        String mancoPath = Paths.get(importerService.getParent(), manco).toString();
+    protected void checkManco(NotificationService ns, String mancoPath) {
         try {
             openSystemSession();
             if (!session.exists(new PathRef(mancoPath))) {

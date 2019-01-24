@@ -24,16 +24,16 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "list")
-public class CorrespondenceList {
+public class WrapperList {
 
-    private List<Correspondence> correspondences;
+    private List<Correspondence> list;
 
-    public List<Correspondence> getCorrespondences() {
-        return correspondences;
+    public List<Correspondence> getList() {
+        return list;
     }
 
     @XmlElement(name = "correspondence")
-    public void setCorrespondences(List<Correspondence> correspondences) {
-        this.correspondences = correspondences;
+    public void setList(List<Correspondence> list) {
+        this.list = list;
     }
 }

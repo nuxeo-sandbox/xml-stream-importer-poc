@@ -19,11 +19,16 @@
  */
 package org.nuxeo.dst.importer.exceptions;
 
-import org.nuxeo.ecm.core.api.NuxeoException;
+public class MissingFieldException extends Exception {
 
-public class AvroDocumentException extends NuxeoException {
+    private String fieldName;
 
-    public AvroDocumentException(String message) {
+    public MissingFieldException(String message, String field) {
         super(message);
+        this.fieldName = field;
+    }
+
+    public String getFieldName() {
+        return fieldName;
     }
 }

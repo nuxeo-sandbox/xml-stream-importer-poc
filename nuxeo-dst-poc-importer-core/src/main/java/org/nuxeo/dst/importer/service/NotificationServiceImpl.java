@@ -59,6 +59,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     protected void send(Response response, HttpURLConnection conn) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
+        conn.setDoOutput(true);
         try (OutputStream os = conn.getOutputStream()) {
             byte[] outStr = mapper.writeValueAsString(response).getBytes();
             conn.setFixedLengthStreamingMode(outStr.length);

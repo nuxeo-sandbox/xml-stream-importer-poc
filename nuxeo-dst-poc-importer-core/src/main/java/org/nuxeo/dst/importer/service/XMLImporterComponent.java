@@ -27,7 +27,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
-import org.nuxeo.dst.importer.data.CorrespondenceList;
+import org.nuxeo.dst.importer.data.WrapperList;
 import org.nuxeo.dst.importer.data.Documentable;
 import org.nuxeo.runtime.model.ComponentInstance;
 import org.nuxeo.runtime.model.DefaultComponent;
@@ -52,11 +52,11 @@ public class XMLImporterComponent extends DefaultComponent implements XMLImporte
         Class wrapper = descriptor.getWrapperClass();
         JAXBContext ctx = JAXBContext.newInstance(wrapper);
         Unmarshaller unmarshaller = ctx.createUnmarshaller();
-
+//        unmarshaller.setSchema(ReflectData.get().getSchema(wrapper));
         // TODO: remove this weird magic in favor of truly dynamic resolution | introduce wrappable interface
-        CorrespondenceList unmarshal = (CorrespondenceList) wrapper.cast(unmarshaller.unmarshal(xml));
+        WrapperList unmarshal = (WrapperList) wrapper.cast(unmarshaller.unmarshal(xml));
 
-        return unmarshal.getCorrespondences();
+        return unmarshal.getList();
     }
 
     @Override

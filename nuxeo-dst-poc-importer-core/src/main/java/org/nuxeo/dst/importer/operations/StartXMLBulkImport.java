@@ -2,7 +2,6 @@ package org.nuxeo.dst.importer.operations;
 
 import javax.xml.bind.JAXBException;
 
-import org.nuxeo.dst.importer.service.XMLImporterService;
 import org.nuxeo.dst.importer.work.XMLProducerWork;
 import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
@@ -25,18 +24,11 @@ public class StartXMLBulkImport {
     @Context
     protected CoreSession session;
 
-    @Context
-    protected XMLImporterService importerService;
-
-    // TODO: change to `location`
-    @Param(name = "xml")
+    @Param(name = "location")
     protected String xml;
 
     @Param(name = "manco")
     protected String manco;
-
-//    @Param(name = "uuid")
-//    protected String uuid;
 
     @OperationMethod
     public DocumentModel run() throws JAXBException {

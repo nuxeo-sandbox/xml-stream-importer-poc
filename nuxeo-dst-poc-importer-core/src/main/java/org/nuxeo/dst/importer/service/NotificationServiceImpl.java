@@ -22,6 +22,7 @@ package org.nuxeo.dst.importer.service;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.commons.logging.Log;
@@ -38,15 +39,14 @@ public class NotificationServiceImpl implements NotificationService {
 
     public static final String NOTIFICATION_URL = "nuxeo.importer.callback.url";
 
-    protected String url;
+    protected URL url;
 
     @Override
     public void send(int code, String message) {
         Response response = new Response(code, message);
 
-        String callback = getURL();
         try {
-            URL url = new URL(callback);
+            URL url = getURL();
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod(HttpMethod.POST.getName());
             conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
@@ -67,13 +67,14 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-    protected String getURL() {
+    protected URL getURL() throws MalformedURLException {
         if (url == null) {
-            url = Framework.getProperty(NOTIFICATION_URL);
-
-            if (url == null) {
+            String urlStr = Framework.getProperty(NOTIFICATION_URL);
+            if (urlStr == null) {
                 throw new NuxeoException(NOTIFICATION_URL + " is not defined");
             }
+
+            url = new URL(urlStr);
         }
 
         return url;
@@ -85,9 +86,7 @@ public class NotificationServiceImpl implements NotificationService {
 
         private String message;
 
-        public Response() {
-
-        }
+        public Response() { }
 
         public Response(int code, String message) {
             this.code = code;

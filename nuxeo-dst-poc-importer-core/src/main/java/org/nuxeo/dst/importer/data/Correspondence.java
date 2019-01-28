@@ -45,99 +45,137 @@ import org.nuxeo.dst.importer.exceptions.MissingFieldException;
 
 @XmlRootElement(name = Correspondence.SCHEMA)
 @PropertyClass(schema = Correspondence.SCHEMA)
-public class Correspondence implements Documentable {
+public class Correspondence implements Documentable, CorrespondenceCommon {
 
     private static final Log log = LogFactory.getLog(Correspondence.class);
 
-    public static final String SCHEMA = "correspondence";
-
-    public static final String HIDDEN_PROP = SCHEMA + ":hidden";
-
-    public static final String HIDDEN_REASON_PROP = SCHEMA + ":hiddenReason";
-
-    public static final String INGEST_METHOD_PROP = SCHEMA + ":ingestMethod";
-
-    public static final String CONFIG_ADMIN_ONLY_PROP = SCHEMA + ":configAdminOnly";
-
-    public static final String MANCO_PROP = SCHEMA + ":manco";
-
-    public static final String DESIGN_PROP = SCHEMA + ":design";
-
-    public static final String BUSINESS_OWNER_PROP = SCHEMA + ":businessOwner";
-
-    public static final String ENTRY_TYPE_PROP = SCHEMA + ":correspondenceTypeEntry";
-
-    public static final String AGENT_ID_PROP = SCHEMA + ":agentID";
-
-    public static final String LEGAL_OWNER_PROP = SCHEMA + ":legalOwner";
-
-    public static final String SEDOL_PROP = SCHEMA + ":SEDOL";
-
-    public static final String OWNER_TYPE_ENTRY_PROP = SCHEMA + ":ownerTypeEntry";
-
-    public static final String EXTERNAL_SOURCE_SYSTEM_PROP = SCHEMA + ":externalData/sourceSystem";
-
-    public static final String EXTERNAL_CREATE_DATE_PROP = SCHEMA + ":externalData/createdDate";
-
     @Property(value = DC_TITLE, required = true)
     private String title;
-
-    @Property(value = "path", skip = true, required = true)
-    private String path;
 
     @Nullable
     @Property(value = DC_DESCRIPTION)
     private String description;
 
-    @Property(value = DESIGN_PROP, required = true)
-    private String designId;
-
-    @Nullable
-    @Property(value = MANCO_PROP)
-    private String manco;
-
-    @Nullable
-    @Property(value = FILE_CONTENT)
-    private String content;
-
-    @Nullable
-    @Property(INGEST_METHOD_PROP)
-    private String ingestMethod;
-
-    @Nullable
-    @Property(value = AGENT_ID_PROP)
-    private String[] agentIds;
-
-    @Nullable
-    @Property(LEGAL_OWNER_PROP)
-    private List<LegalOwner> legalOwners;
-
-    @Nullable
-    @Property(BUSINESS_OWNER_PROP)
-    private String businessOwner;
-
-    @Nullable
-    @Property(ENTRY_TYPE_PROP)
-    private String entryType;
-
-    @Nullable
-    @Property(OWNER_TYPE_ENTRY_PROP)
-    private String ownerEntryType;
-
-    @Property(value = HIDDEN_PROP, required = true)
-    private String hidden;
-
-    @Nullable
-    @Property(HIDDEN_REASON_PROP)
-    private String hiddenReason;
+    @Property(value = "path", skip = true, required = true)
+    private String path;
 
     @Nullable
     @Property(SEDOL_PROP)
     private String sedol;
 
     @Nullable
+    @Property(ACCESS_DATE_PROP)
+    protected Date accessDate;
+
+    @Nullable
+    @Property(value = AGENT_ID_PROP)
+    private String[] agentIds;
+
+    @Nullable
+    @Property(value = BRAND_PROP)
+    private String brand;
+
+    @Nullable
+    @Property(value = BUSINESS_ASSOCIATE_ID_PROP)
+    private String[] businessAssociateID;
+
+    @Nullable
+    @Property(BUSINESS_OWNER_PROP)
+    private String businessOwner;
+
+    @Nullable
+    @Property(value = CONFIG_ADMIN_ONLY_PROP)
+    private String configAdminOnly = "false";
+
+    @Nullable
+    @Property(ENTRY_TYPE_PROP)
+    private String entryType;
+
+    @Nullable
+    @Property(DELIVERY_METHOD)
+    private String deliveryMethod;
+
+    @Property(value = DESIGN_PROP, required = true)
+    private String designId;
+
+    @Nullable
+    @Property(value = DIRECTION_PROP)
+    private String direction = "OutBound";
+
+    @Nullable
+    @Property(EFFECTIVE_DATE_PROP)
+    protected Date effectiveDate;
+
+    @Nullable
+    @Property(EVENT_ID_PROP)
+    protected String eventId;
+
+    @Nullable
     @PropertyClass(schema = "externalData")
     private External external;
+
+    @Nullable
+    @PropertyClass(schema = "fundInformation")
+    private FundInformation fundInformation;
+
+    @Nullable
+    @PropertyClass(schema = GENERATION_METHOD_PROP)
+    private String generationMethod;
+
+    @Property(value = HIDDEN_PROP, required = true)
+    private String hidden = "false";
+
+    @Nullable
+    @Property(HIDDEN_REASON_PROP)
+    private String hiddenReason;
+
+    @Nullable
+    @Property(IMPORT_BATCH_ID_PROP)
+    private String importBatchID;
+
+    @Nullable
+    @Property(INGEST_METHOD_PROP)
+    private String ingestMethod = "Manual";
+
+    @Nullable
+    @Property(IS_DUPLICATE_PROP)
+    private String isDuplicate = "Manual";
+
+    @Nullable
+    @Property(LAST_STATE_CHANGE_DATE_PROP)
+    private String lastStateChangeDate;
+
+    @Nullable
+    @Property(LEGAL_OWNER_PROP)
+    private List<LegalOwner> legalOwners;
+
+    @Nullable
+    @Property(value = MANCO_PROP)
+    private String manco;
+
+    @Nullable
+    @Property(OWNER_TYPE_ENTRY_PROP)
+    private String ownerEntryType;
+
+    @Nullable
+    @Property(PULL_CODE_PROP)
+    private String pullCode;
+
+    @Nullable
+    @PropertyClass(schema = "recipient")
+    private Recipient recipient;
+
+    @Nullable
+    @Property(SCHEME_ID_PROP)
+    private String schemeID;
+
+    @Nullable
+    @Property(value = FILE_CONTENT)
+    private String content;
+
+
+    public Correspondence() {
+    }
 
     @Override
     public String getType() {
@@ -362,6 +400,88 @@ public class Correspondence implements Documentable {
         this.external = external;
     }
 
+    @XmlJavaTypeAdapter(DateAdapter.class)
+    @XmlElement(name = "accessDate")
+    public void setAccessDate(Date accessDate) {
+        this.accessDate = accessDate;
+    }
+
+    @XmlElement(name = "brand")
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    @XmlElement(name = "businessAssociateID")
+    public void setBusinessAssociateID(String[] businessAssociateID) {
+        this.businessAssociateID = businessAssociateID;
+    }
+
+    @XmlElement(name = "configAdminOnly")
+    public void setConfigAdminOnly(String configAdminOnly) {
+        this.configAdminOnly = configAdminOnly;
+    }
+
+    @XmlElement(name = "deliveryMethod")
+    public void setDeliveryMethod(String deliveryMethod) {
+        this.deliveryMethod = deliveryMethod;
+    }
+
+    @XmlElement(name = "direction")
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
+
+    @XmlJavaTypeAdapter(DateAdapter.class)
+    @XmlElement(name = "effectiveDate")
+    public void setEffectiveDate(Date effectiveDate) {
+        this.effectiveDate = effectiveDate;
+    }
+
+    @XmlElement(name = "eventId")
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+    }
+
+    @XmlElement(name = "fundInformation")
+    public void setFundInformation(FundInformation fundInformation) {
+        this.fundInformation = fundInformation;
+    }
+
+    @XmlElement(name = "generationMethod")
+    public void setGenerationMethod(String generationMethod) {
+        this.generationMethod = generationMethod;
+    }
+
+    @XmlElement(name = "importBatchID")
+    public void setImportBatchID(String importBatchID) {
+        this.importBatchID = importBatchID;
+    }
+
+    @XmlElement(name = "isDuplicate")
+    public void setIsDuplicate(String isDuplicate) {
+        this.isDuplicate = isDuplicate;
+    }
+
+    @XmlElement(name = "lastStateChangeDate")
+    public void setLastStateChangeDate(String lastStateChangeDate) {
+        this.lastStateChangeDate = lastStateChangeDate;
+    }
+
+    @XmlElement(name = "pullCode")
+    public void setPullCode(String pullCode) {
+        this.pullCode = pullCode;
+    }
+
+    @XmlElement(name = "recipient")
+    public void setRecipient(Recipient recipient) {
+        this.recipient = recipient;
+    }
+
+    @XmlElement(name = "schemeID")
+    public void setSchemeID(String schemeID) {
+        this.schemeID = schemeID;
+    }
+
     @XmlRootElement(name = "legalOwner")
     @PropertyClass(schema = "legalOwner", parent = "correspondence")
     protected static class LegalOwner {
@@ -429,6 +549,120 @@ public class Correspondence implements Documentable {
         @XmlJavaTypeAdapter(DateAdapter.class)
         public void setCreateDate(Date createDate) {
             this.createDate = createDate;
+        }
+    }
+
+    @XmlRootElement(name = "fundInformation")
+    @PropertyClass(schema = "fundInformation", parent = "correspondence")
+    protected static class FundInformation {
+
+        @Nullable
+        @Property(FUND_INFO_NAME_PROP)
+        protected String fundName;
+
+        @Nullable
+        @Property(FUND_INFO_DISTRIBUTION_DATE)
+        protected Date distributionDate;
+
+        public String getFundName() {
+            return fundName;
+        }
+
+        @XmlElement(name = "fundName")
+        public void setFundName(String fundName) {
+            this.fundName = fundName;
+        }
+
+        public Date getDistributionDate() {
+            return distributionDate;
+        }
+
+        @XmlElement(name = "distributionDate")
+        @XmlJavaTypeAdapter(DateAdapter.class)
+        public void setDistributionDate(Date distributionDate) {
+            this.distributionDate = distributionDate;
+        }
+    }
+
+    @XmlRootElement(name = "recipient")
+    @PropertyClass(schema = "recipient", parent = "correspondence")
+    protected static class Recipient {
+
+        @Nullable
+        @Property(RECIPIENT_NAME_PROP)
+        protected String name;
+
+        @Nullable
+        @Property(RECIPIENT_ADDRESS_PROP)
+        protected String address;
+
+        @Nullable
+        @Property(RECIPIENT_EMAIL_PROP)
+        protected String email;
+
+        @Nullable
+        @Property(RECIPIENT_FAX_PROP)
+        protected String fax;
+
+        @Nullable
+        @Property(RECIPIENT_PHONE_PROP)
+        protected String phone;
+
+        @Nullable
+        @Property(RECIPIENT_POST_CODE_PROP)
+        protected String postCode;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getAddress() {
+            return address;
+        }
+
+        @XmlElement(name = "address")
+        public void setAddress(String address) {
+            this.address = address;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        @XmlElement(name = "email")
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getFax() {
+            return fax;
+        }
+
+        @XmlElement(name = "fax")
+        public void setFax(String fax) {
+            this.fax = fax;
+        }
+
+        public String getPhone() {
+            return phone;
+        }
+
+        @XmlElement(name = "phone")
+        public void setPhone(String phone) {
+            this.phone = phone;
+        }
+
+        public String getPostCode() {
+            return postCode;
+        }
+
+        @XmlElement(name = "postCode")
+        public void setPostCode(String postCode) {
+            this.postCode = postCode;
         }
     }
 }

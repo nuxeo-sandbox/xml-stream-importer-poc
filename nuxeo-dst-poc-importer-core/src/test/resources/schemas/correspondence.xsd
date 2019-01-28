@@ -38,6 +38,8 @@
   <xs:element name="brand" type="xs:string"/>
   <xs:element name="businessAssociateID" type="nxs:stringList"/>
   <xs:element name="businessOwner" type="xs:string"/>
+  <xs:element name="ingestMethod" type="xs:string"/>
+  <xs:element name="isDuplicate" type="xs:string"/>
   <xs:element name="configAdminOnly" default="false" type="xs:boolean"/>
   <xs:element name="correspondenceTypeEntry" type="xs:string"/>
   <xs:element name="deliveryMethod" type="xs:string"/>

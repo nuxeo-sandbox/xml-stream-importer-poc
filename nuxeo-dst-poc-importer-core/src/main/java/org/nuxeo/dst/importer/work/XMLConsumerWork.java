@@ -46,6 +46,7 @@ import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.Blobs;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.NuxeoException;
+import org.nuxeo.ecm.core.blob.BlobInfo;
 import org.nuxeo.ecm.core.work.AbstractWork;
 import org.nuxeo.ecm.platform.audit.api.AuditLogger;
 import org.nuxeo.ecm.platform.audit.api.LogEntry;
@@ -194,6 +195,9 @@ public class XMLConsumerWork extends AbstractWork {
                     ns.send(102, "Binary at " + value + "does not exist");
                     continue;
                 }
+
+                BlobInfo info = new BlobInfo();
+                info.filename = (String) value;
 
                 Blob blob = Blobs.createBlob(bin);
                 doc.setPropertyValue(name, (Serializable) blob);

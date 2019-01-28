@@ -29,4 +29,22 @@
       <createDate>2018-01-01</createDate>
     </external>
   </correspondence>
+  <correspondence>
+    <title>NewCorrespondence1</title>
+    <SEDOL>A_NUM_SEDOL_0</SEDOL>
+    <hidden>false</hidden>
+    <design>Awesome</design>
+    <agentIds>
+      <value>test1</value>
+      <value>test2</value>
+    </agentIds>
+    <external>
+      <sourceSystem>Git</sourceSystem>
+      <createDate>2018-01-01</createDate>
+    </external>
+    <recipient>
+      <name>John</name>
+      <email>john@mail.com</email>
+    </recipient>
+  </correspondence>
 </list>

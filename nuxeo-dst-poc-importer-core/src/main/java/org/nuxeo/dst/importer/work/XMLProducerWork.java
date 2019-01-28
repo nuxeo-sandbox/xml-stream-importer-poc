@@ -127,7 +127,7 @@ public class XMLProducerWork extends AbstractWork {
                 LogOffset offset = appender.append(doc.getName(), Record.of(doc.getName(), buf.array()));
             } catch (IOException e) {
                 log.error(e);
-                ns.send(400, e.getMessage());
+                ns.send(400, e.getMessage()); // Collecting the errors
             }
         }
 

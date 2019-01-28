@@ -73,7 +73,7 @@ public class TestStartXMLBulkImport {
         params.put("manco", mancoTest);
 
         File xml = FileUtils.getResourceFileFromContext("test-correspondence0.xml");
-        params.put("xml", xml.getAbsolutePath());
+        params.put("location", xml.getAbsolutePath());
         DocumentModel doc = (DocumentModel) automationService.run(ctx, StartXMLBulkImport.ID, params);
         assertThat(doc).isNull();
 

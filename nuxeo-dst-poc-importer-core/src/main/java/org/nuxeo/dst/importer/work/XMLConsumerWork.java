@@ -20,6 +20,7 @@
 package org.nuxeo.dst.importer.work;
 
 import static org.nuxeo.dst.importer.common.Constants.FILE_CONTENT;
+import static org.nuxeo.dst.importer.work.XMLProducerWork.LOG_MANAGER_NAME_PROP;
 import static org.nuxeo.dst.importer.work.XMLProducerWork.XML_IMPORTER_CATEGORY;
 
 import java.io.Externalizable;
@@ -89,7 +90,8 @@ public class XMLConsumerWork extends AbstractWork {
     @Override
     public void work() {
         StreamService ss = Framework.getService(StreamService.class);
-        LogManager logger = ss.getLogManager("default");
+        String managerName = Framework.getProperty(LOG_MANAGER_NAME_PROP, "default");
+        LogManager logger = ss.getLogManager(managerName);
         Schema schema = ReflectData.get().getSchema(importClass);
         consume(logger, schema);
     }

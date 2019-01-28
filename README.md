@@ -8,6 +8,20 @@ An implementation of Nuxeo XML Importer using Nuxeo Stream
 
 `mvn clean install`
 
+## Configuration
+
+By default the importer will use Chronicle Queue for streaming records for further import.
+To redirect the import records through Kafka you must supply `nuxeo.conf` with 
+following parameters:
+
+`nuxeo.importer.log.name=kafka` 
+`nuxeo.importer.bootstrap.servers=` - your Kafka discover ip address(es)
+`nuxeo.importer.request.timeout.ms=30000` - Or a value that fits the best your cluster settings
+`nuxeo.importer.max.poll.interval.ms=20000` - Or a value that fits the best your cluster settings
+`nuxeo.importer.session.timeout.ms=10000` - Or a value that fits the best your cluster settings
+`nuxeo.importer.heartbeat.interval.ms=400` - Or a value that fits the best your cluster settings
+`nuxeo.importer.max.poll.records=25` - Or a value that fits the best your cluster settings
+
 ## About Nuxeo
 Nuxeo dramatically improves how content-based applications are built,
 managed and deployed, making customers more agile,

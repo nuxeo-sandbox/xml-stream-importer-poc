@@ -57,7 +57,7 @@ public class TestXMLImportService {
         XMLImporterService service = Framework.getService(XMLImporterService.class);
         List<? extends Documentable> parsed = service.parse(xml);
         assertThat(parsed).isNotEmpty();
-        assertThat(parsed).hasSize(2);
+        assertThat(parsed).hasSize(3);
 
         String documentPath = parsed.get(0).getDocumentPath();
     }

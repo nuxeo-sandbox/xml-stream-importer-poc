@@ -50,6 +50,8 @@ public class XMLProducerWork extends AbstractWork {
 
     private static final Log log = LogFactory.getLog(XMLProducerWork.class);
 
+    public static final String LOG_MANAGER_NAME_PROP = "nuxeo.importer.log.name";
+
     public static final String XML_STREAM_PRODUCER_WORK = "XMLProducerWork";
 
     public static final String XML_IMPORTER_CATEGORY = "XMLImporter";
@@ -105,7 +107,8 @@ public class XMLProducerWork extends AbstractWork {
         LogAppender<Record> appender;
         try {
             StreamService ss = Framework.getService(StreamService.class);
-            LogManager logger = ss.getLogManager("default");
+            String managerName = Framework.getProperty(LOG_MANAGER_NAME_PROP, "default");
+            LogManager logger = ss.getLogManager(managerName);
 
             logger.createIfNotExists(logName, 2);
             appender = logger.getAppender(logName);

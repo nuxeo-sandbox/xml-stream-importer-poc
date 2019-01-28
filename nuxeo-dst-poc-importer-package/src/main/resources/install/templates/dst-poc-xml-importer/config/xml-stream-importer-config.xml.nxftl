@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.dst.stream.contrib">
+
+  <#if nuxeo.importer.log.name == "kafka">
+      <extension point="kafkaConfig" target="org.nuxeo.runtime.stream.kafka.service">
+
+        <logConfig name="kafka" type="kafka">
+          <option name="config">default</option>
+        </logConfig>
+
+        <kafkaConfig name="default" randomPrefix="true" topicPrefix="nuxeo-importer-">
+          <producer>
+            <property name="bootstrap.servers">#{nuxeo.importer.bootstrap.servers}</property>
+          </producer>
+          <consumer>
+            <property name="bootstrap.servers">#{nuxeo.importer.bootstrap.servers}</property>
+            <property name="request.timeout.ms">#{nuxeo.importer.request.timeout.ms}</property>
+            <property name="max.poll.interval.ms">#{nuxeo.importer.max.poll.interval.ms}</property>
+            <property name="session.timeout.ms">#{nuxeo.importer.session.timeout.ms}</property>
+            <property name="heartbeat.interval.ms">#{nuxeo.importer.heartbeat.interval.ms}</property>
+            <property name="max.poll.records">#{nuxeo.importer.max.poll.records}</property>
+          </consumer>
+        </kafkaConfig>
+
+    </extension>
+  <#else>
+
+      <extension point="logConfig" target="org.nuxeo.runtime.stream.service">
+
+        <logConfig name="default">
+          <log name="input" size="1" />
+          <log name="output" size="1" />
+          <log name="myLog" size="1" />
+        </logConfig>
+
+      </extension>
+  </#if>
+
+  <extension target="org.nuxeo.dst.importer.service.XMLImporterComponent"
+             point="configuration">
+
+    <configuration
+            wrapperClass="org.nuxeo.dst.importer.data.CorrespondencesWrapper"
+            class="org.nuxeo.dst.importer.data.Correspondence"
+            parent="/default-domain/receivedCorrespondence/"/>
+
+  </extension>
+
+</component>

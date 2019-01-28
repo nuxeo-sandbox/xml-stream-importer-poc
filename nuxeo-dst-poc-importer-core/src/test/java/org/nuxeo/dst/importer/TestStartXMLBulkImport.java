@@ -3,9 +3,10 @@ package org.nuxeo.dst.importer;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.nuxeo.dst.importer.data.Correspondence.AGENT_ID_PROP;
-import static org.nuxeo.dst.importer.data.Correspondence.DESIGN_PROP;
-import static org.nuxeo.dst.importer.data.Correspondence.EXTERNAL_SOURCE_SYSTEM_PROP;
+import static org.nuxeo.dst.importer.data.CorrespondenceCommon.AGENT_ID_PROP;
+import static org.nuxeo.dst.importer.data.CorrespondenceCommon.DESIGN_PROP;
+import static org.nuxeo.dst.importer.data.CorrespondenceCommon.EXTERNAL_SOURCE_SYSTEM_PROP;
+import static org.nuxeo.dst.importer.data.CorrespondenceCommon.LEGAL_OWNER_PROP;
 
 import java.io.File;
 import java.util.HashMap;
@@ -17,7 +18,6 @@ import javax.inject.Inject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.common.utils.FileUtils;
-import org.nuxeo.dst.importer.data.Correspondence;
 import org.nuxeo.dst.importer.operations.StartXMLBulkImport;
 import org.nuxeo.ecm.automation.AutomationService;
 import org.nuxeo.ecm.automation.OperationContext;
@@ -88,7 +88,7 @@ public class TestStartXMLBulkImport {
         assertEquals("Awesome", design);
 
         @SuppressWarnings("unchecked")
-        List<Object> owners = (List<Object>) doc0.getPropertyValue(Correspondence.LEGAL_OWNER_PROP);
+        List<Object> owners = (List<Object>) doc0.getPropertyValue(LEGAL_OWNER_PROP);
         assertThat(owners).hasSize(2);
 
         DocumentModel doc1 = session.getDocument(new PathRef("/" + mancoTest + "/NewCorrespondence1"));

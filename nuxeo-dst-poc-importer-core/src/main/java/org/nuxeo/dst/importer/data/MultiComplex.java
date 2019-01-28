@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2006-2018 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2006-2019 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,22 +17,11 @@
  * Contributors:
  *     anechaev
  */
-package org.nuxeo.dst.importer.annotations;
+package org.nuxeo.dst.importer.data;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.Map;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface Property {
+public interface MultiComplex {
 
-    String value();
-
-    boolean required() default false;
-
-    boolean skip() default false;
-
-    boolean multivalue() default false;
+    Map<String, String> toMap();
 }

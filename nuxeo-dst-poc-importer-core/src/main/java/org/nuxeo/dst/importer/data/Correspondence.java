@@ -22,6 +22,7 @@ package org.nuxeo.dst.importer.data;
 import static org.nuxeo.dst.importer.common.Constants.DC_DESCRIPTION;
 import static org.nuxeo.dst.importer.common.Constants.DC_TITLE;
 import static org.nuxeo.dst.importer.common.Constants.FILE_CONTENT;
+import static org.nuxeo.dst.importer.data.CorrespondenceCommon.*;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -42,10 +43,11 @@ import org.nuxeo.dst.importer.annotations.Property;
 import org.nuxeo.dst.importer.annotations.PropertyClass;
 import org.nuxeo.dst.importer.common.DateAdapter;
 import org.nuxeo.dst.importer.exceptions.MissingFieldException;
+import org.nuxeo.ecm.core.api.NuxeoException;
 
-@XmlRootElement(name = Correspondence.SCHEMA)
-@PropertyClass(schema = Correspondence.SCHEMA)
-public class Correspondence implements Documentable, CorrespondenceCommon {
+@XmlRootElement(name = SCHEMA)
+@PropertyClass(schema = SCHEMA)
+public class Correspondence implements Documentable {
 
     private static final Log log = LogFactory.getLog(Correspondence.class);
 
@@ -146,7 +148,7 @@ public class Correspondence implements Documentable, CorrespondenceCommon {
     private String lastStateChangeDate;
 
     @Nullable
-    @Property(LEGAL_OWNER_PROP)
+    @Property(value = LEGAL_OWNER_PROP, multivalue = true)
     private List<LegalOwner> legalOwners;
 
     @Nullable
@@ -246,10 +248,20 @@ public class Correspondence implements Documentable, CorrespondenceCommon {
         if (annotation.required() && value == null) {
             throw new MissingFieldException(annotation.value() + " cannot be empty", field.getName());
         }
-        if (value != null && annotation.value().contains("legalOwner")) {
-            value = ((List<LegalOwner>) value).stream()
-                    .map(lo -> lo.ownerProps)
-                    .collect(Collectors.toList());
+//        if (value != null && annotation.value().contains("legalOwner")) {
+//            value = ((List<LegalOwner>) value).stream()
+//                    .map(lo -> lo.ownerProps)
+//                    .collect(Collectors.toList());
+//        }
+
+        if (value != null && annotation.multivalue()) {
+            if (value instanceof List) {
+                value = ((List<MultiComplex>) value).stream()
+                        .map(MultiComplex::toMap)
+                        .collect(Collectors.toList());
+            } else {
+                throw new NuxeoException("unexpected entry of " + value.getClass().getCanonicalName());
+            }
         }
 
         return value;
@@ -484,7 +496,7 @@ public class Correspondence implements Documentable, CorrespondenceCommon {
 
     @XmlRootElement(name = "legalOwner")
     @PropertyClass(schema = "legalOwner", parent = "correspondence")
-    protected static class LegalOwner {
+    protected static class LegalOwner implements MultiComplex {
 
         @Nullable
 //        @Property(LEGAL_OWNER_PROP + "/0/designation")
@@ -516,6 +528,11 @@ public class Correspondence implements Documentable, CorrespondenceCommon {
         public void setLegalOwnerID(String legalOwnerID) {
             ownerProps.put("legalOwnerID", legalOwnerID);
             this.legalOwnerID = legalOwnerID;
+        }
+
+        @Override
+        public Map<String, String> toMap() {
+            return ownerProps;
         }
     }
 

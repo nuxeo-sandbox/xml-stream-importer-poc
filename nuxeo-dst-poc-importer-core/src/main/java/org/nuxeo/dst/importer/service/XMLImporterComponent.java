@@ -27,8 +27,8 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
-import org.nuxeo.dst.importer.data.Documentable;
-import org.nuxeo.dst.importer.data.Wrapper;
+import org.nuxeo.dst.importer.model.Documentable;
+import org.nuxeo.dst.importer.model.Wrapper;
 import org.nuxeo.runtime.model.ComponentInstance;
 import org.nuxeo.runtime.model.DefaultComponent;
 

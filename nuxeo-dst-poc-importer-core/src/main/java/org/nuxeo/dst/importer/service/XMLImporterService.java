@@ -23,7 +23,7 @@ import java.io.File;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 
-import org.nuxeo.dst.importer.data.Documentable;
+import org.nuxeo.dst.importer.model.Documentable;
 
 public interface XMLImporterService {
 

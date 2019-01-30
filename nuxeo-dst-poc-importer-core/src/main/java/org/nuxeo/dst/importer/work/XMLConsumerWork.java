@@ -39,7 +39,7 @@ import org.apache.avro.message.RawMessageDecoder;
 import org.apache.avro.reflect.ReflectData;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.nuxeo.dst.importer.data.Documentable;
+import org.nuxeo.dst.importer.model.Documentable;
 import org.nuxeo.dst.importer.exceptions.MissingFieldException;
 import org.nuxeo.dst.importer.service.NotificationService;
 import org.nuxeo.dst.importer.service.XMLImporterService;
@@ -76,9 +76,10 @@ public class XMLConsumerWork extends AbstractWork {
     private Class importClass;
 
     public XMLConsumerWork(String repo, String user, String manco, Class theClass, String logName) {
-        super();
+        super(manco + "_" + Math.abs(RANDOM.nextInt()));
         Objects.requireNonNull(repo);
         Objects.requireNonNull(manco);
+        Objects.requireNonNull(theClass);
 
         this.manco = manco;
         this.importClass = theClass;

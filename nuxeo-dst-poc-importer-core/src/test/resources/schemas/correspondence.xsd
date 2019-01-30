@@ -47,6 +47,7 @@
   <xs:element name="direction" default="OutBound" type="xs:string"/>
   <xs:element name="effectiveDate" type="xs:date"/>
   <xs:element name="eventID" type="xs:string"/>
+  <xs:element name="generationMethod" type="xs:string"/>
   <xs:element name="externalData" type="nxs:correspondence_externalDataType"/>
   <xs:complexType name="correspondence_externalDataType">
     <xs:sequence>

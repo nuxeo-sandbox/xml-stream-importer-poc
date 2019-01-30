@@ -47,4 +47,71 @@
       <email>john@mail.com</email>
     </recipient>
   </correspondence>
+
+  <correspondence>
+    <title>NewCorrespondenceFull</title>
+    <description>TEXT</description>
+    <SEDOL>A_NUM_SEDOL</SEDOL>
+    <!-- <manco>Manco name</manco> not a required field, should be fullfield by the platform listeners-->
+    <ingestMethod>Migration</ingestMethod> <!-- value should be applied automatically based on source -->
+    <design>Awesome</design>
+
+    <legalOwner>
+      <designation>lo1</designation>
+      <legalOwnerID>lo1ID</legalOwnerID>
+    </legalOwner>
+    <legalOwner>
+      <designation>lo2</designation>
+      <legalOwnerID>lo2ID</legalOwnerID>
+    </legalOwner> <!-- Note how `legalOwner` multi-value complex field fullfilled-->
+
+    <content>/full/path/to/bin.pdf</content>
+    <businessOwner>Distributions</businessOwner>
+    <entryType>TheType</entryType>
+    <ownerEntryType>Investor</ownerEntryType>
+    <hidden>true</hidden>
+    <hiddenReason>TEXT</hiddenReason>
+
+    <external>
+      <sourceSystem>Git</sourceSystem>
+      <createDate>2018-01-01</createDate>
+    </external>
+
+    <accessDate>2018-01-01</accessDate>
+    <brand>Brand</brand>
+
+    <businessAssociateID>
+      <value>test1</value>
+      <value>test2</value>
+    </businessAssociateID>
+
+    <configAdminOnly>false</configAdminOnly>
+    <deliveryMethod>Method</deliveryMethod>
+    <direction>Direction</direction>
+    <effectiveDate>2018-01-01</effectiveDate>
+    <eventId>An ID</eventId>
+
+    <fundInformation>
+      <fundName>Name</fundName>
+      <distributionDate>2018-01-01</distributionDate>
+    </fundInformation>
+
+    <generationMethod>Automatic</generationMethod>
+    <importBatchID>Batch ID</importBatchID>
+    <isDuplicate>false</isDuplicate>
+    <lastStateChangeDate>2018-01-01</lastStateChangeDate>
+    <pullCode>CODE</pullCode>
+
+    <recipient>
+      <name>John</name>
+      <email>john@mail.com</email>
+      <address>Earth</address>
+      <fax>500-009-2233</fax>
+      <phone>500-009-2230</phone>
+      <postCode>12311</postCode>
+    </recipient>
+
+    <schemeID>An ID</schemeID>
+
+  </correspondence>
 </list>

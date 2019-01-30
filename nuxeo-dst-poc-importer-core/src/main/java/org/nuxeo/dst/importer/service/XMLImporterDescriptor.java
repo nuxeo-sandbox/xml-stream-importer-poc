@@ -23,7 +23,7 @@ import java.io.Serializable;
 
 import org.nuxeo.common.xmap.annotation.XNode;
 import org.nuxeo.common.xmap.annotation.XObject;
-import org.nuxeo.dst.importer.data.Wrapper;
+import org.nuxeo.dst.importer.model.Wrapper;
 
 @XObject("configuration")
 public class XMLImporterDescriptor implements Serializable {

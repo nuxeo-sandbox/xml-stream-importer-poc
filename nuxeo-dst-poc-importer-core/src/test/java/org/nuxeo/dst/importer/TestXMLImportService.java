@@ -30,7 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.common.utils.FileUtils;
 import org.nuxeo.directory.test.DirectoryFeature;
-import org.nuxeo.dst.importer.data.Documentable;
+import org.nuxeo.dst.importer.model.Documentable;
 import org.nuxeo.dst.importer.service.XMLImporterService;
 import org.nuxeo.ecm.platform.test.PlatformFeature;
 import org.nuxeo.runtime.api.Framework;
@@ -57,7 +57,7 @@ public class TestXMLImportService {
         XMLImporterService service = Framework.getService(XMLImporterService.class);
         List<? extends Documentable> parsed = service.parse(xml);
         assertThat(parsed).isNotEmpty();
-        assertThat(parsed).hasSize(3);
+        assertThat(parsed).hasSize(4);
 
         String documentPath = parsed.get(0).getDocumentPath();
     }

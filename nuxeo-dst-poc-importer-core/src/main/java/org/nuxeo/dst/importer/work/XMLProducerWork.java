@@ -32,7 +32,7 @@ import org.apache.avro.message.RawMessageEncoder;
 import org.apache.avro.reflect.ReflectData;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
-import org.nuxeo.dst.importer.data.Documentable;
+import org.nuxeo.dst.importer.model.Documentable;
 import org.nuxeo.dst.importer.service.NotificationService;
 import org.nuxeo.dst.importer.service.XMLImporterService;
 import org.nuxeo.ecm.core.api.NuxeoException;
@@ -61,7 +61,7 @@ public class XMLProducerWork extends AbstractWork {
     private final String filePath;
 
     public XMLProducerWork(String repo, String user, String manco, String filePath) {
-        super();
+        super(manco + "_" + Math.abs(RANDOM.nextInt()));
 
         Objects.requireNonNull(repo);
         Objects.requireNonNull(manco);

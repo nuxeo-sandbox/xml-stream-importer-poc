@@ -29,6 +29,4 @@ import java.lang.annotation.Target;
 public @interface PropertyClass {
 
     String schema();
-
-    String parent() default "";
 }

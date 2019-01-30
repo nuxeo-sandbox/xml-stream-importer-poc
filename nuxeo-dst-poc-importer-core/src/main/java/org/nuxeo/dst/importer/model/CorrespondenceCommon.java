@@ -17,7 +17,7 @@
  * Contributors:
  *     anechaev
  */
-package org.nuxeo.dst.importer.data;
+package org.nuxeo.dst.importer.model;
 
 public abstract class CorrespondenceCommon {
 
@@ -51,7 +51,7 @@ public abstract class CorrespondenceCommon {
 
     public static final String BRAND_PROP = SCHEMA + ":brand";
 
-    public static final String BUSINESS_ASSOCIATE_ID_PROP = SCHEMA + "businessAssociateID";
+    public static final String BUSINESS_ASSOCIATE_ID_PROP = SCHEMA + ":businessAssociateID";
 
     public static final String DELIVERY_METHOD = SCHEMA + ":deliveryMethod";
 
@@ -59,7 +59,7 @@ public abstract class CorrespondenceCommon {
 
     public static final String EFFECTIVE_DATE_PROP = SCHEMA + ":effectiveDate";
 
-    public static final String EVENT_ID_PROP = SCHEMA + ":eventId";
+    public static final String EVENT_ID_PROP = SCHEMA + ":eventID";
 
     public static final String GENERATION_METHOD_PROP = SCHEMA + ":generationMethod";
 

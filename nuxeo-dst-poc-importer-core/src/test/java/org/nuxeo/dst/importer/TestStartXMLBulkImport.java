@@ -3,10 +3,10 @@ package org.nuxeo.dst.importer;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.nuxeo.dst.importer.data.CorrespondenceCommon.AGENT_ID_PROP;
-import static org.nuxeo.dst.importer.data.CorrespondenceCommon.DESIGN_PROP;
-import static org.nuxeo.dst.importer.data.CorrespondenceCommon.EXTERNAL_SOURCE_SYSTEM_PROP;
-import static org.nuxeo.dst.importer.data.CorrespondenceCommon.LEGAL_OWNER_PROP;
+import static org.nuxeo.dst.importer.model.CorrespondenceCommon.AGENT_ID_PROP;
+import static org.nuxeo.dst.importer.model.CorrespondenceCommon.DESIGN_PROP;
+import static org.nuxeo.dst.importer.model.CorrespondenceCommon.EXTERNAL_SOURCE_SYSTEM_PROP;
+import static org.nuxeo.dst.importer.model.CorrespondenceCommon.LEGAL_OWNER_PROP;
 
 import java.io.File;
 import java.util.HashMap;

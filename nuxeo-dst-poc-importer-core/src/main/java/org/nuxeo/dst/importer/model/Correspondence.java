@@ -17,12 +17,12 @@
  * Contributors:
  *     anechaev
  */
-package org.nuxeo.dst.importer.data;
+package org.nuxeo.dst.importer.model;
 
 import static org.nuxeo.dst.importer.common.Constants.DC_DESCRIPTION;
 import static org.nuxeo.dst.importer.common.Constants.DC_TITLE;
 import static org.nuxeo.dst.importer.common.Constants.FILE_CONTENT;
-import static org.nuxeo.dst.importer.data.CorrespondenceCommon.*;
+import static org.nuxeo.dst.importer.model.CorrespondenceCommon.*;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -121,7 +121,7 @@ public class Correspondence implements Documentable {
     private FundInformation fundInformation;
 
     @Nullable
-    @PropertyClass(schema = GENERATION_METHOD_PROP)
+    @Property(GENERATION_METHOD_PROP)
     private String generationMethod;
 
     @Property(value = HIDDEN_PROP, required = true)
@@ -145,7 +145,7 @@ public class Correspondence implements Documentable {
 
     @Nullable
     @Property(LAST_STATE_CHANGE_DATE_PROP)
-    private String lastStateChangeDate;
+    private Date lastStateChangeDate;
 
     @Nullable
     @Property(value = LEGAL_OWNER_PROP, multivalue = true)
@@ -181,7 +181,7 @@ public class Correspondence implements Documentable {
 
     @Override
     public String getType() {
-        return "correspondence";
+        return SCHEMA;
     }
 
     @Override
@@ -211,18 +211,18 @@ public class Correspondence implements Documentable {
     public Map<String, Serializable> getProperties() throws IllegalAccessException, MissingFieldException {
         Map<String, Serializable> props = new HashMap<>();
 
-        putValues(props, this);
+        pullValues(props, this);
 
         return props;
     }
 
-    protected void putValues(Map<String, Serializable> props, Object object) throws IllegalAccessException, MissingFieldException {
+    protected void pullValues(Map<String, Serializable> props, Object object) throws IllegalAccessException, MissingFieldException {
         Field[] fields = object.getClass().getDeclaredFields();
 
         for (Field field : fields) {
             Object value = field.get(object);
             if (value != null && field.isAnnotationPresent(PropertyClass.class)) {
-                putValues(props, value);
+                pullValues(props, value);
                 continue;
             }
 
@@ -231,13 +231,11 @@ public class Correspondence implements Documentable {
             }
 
             Property annotation = field.getAnnotation(Property.class);
-            if (annotation.skip()) {
-                continue;
-            }
-
-            value = getFieldValue(field, annotation, object);
-            if (value != null) {
-                props.put(annotation.value(), (Serializable) value);
+            if (!annotation.skip()) {
+                value = getFieldValue(field, annotation, object);
+                if (value != null) {
+                    props.put(annotation.value(), (Serializable) value);
+                }
             }
         }
     }
@@ -248,11 +246,6 @@ public class Correspondence implements Documentable {
         if (annotation.required() && value == null) {
             throw new MissingFieldException(annotation.value() + " cannot be empty", field.getName());
         }
-//        if (value != null && annotation.value().contains("legalOwner")) {
-//            value = ((List<LegalOwner>) value).stream()
-//                    .map(lo -> lo.ownerProps)
-//                    .collect(Collectors.toList());
-//        }
 
         if (value != null && annotation.multivalue()) {
             if (value instanceof List) {
@@ -423,7 +416,8 @@ public class Correspondence implements Documentable {
         this.brand = brand;
     }
 
-    @XmlElement(name = "businessAssociateID")
+    @XmlElementWrapper(name = "businessAssociateID")
+    @XmlElement(name = "value")
     public void setBusinessAssociateID(String[] businessAssociateID) {
         this.businessAssociateID = businessAssociateID;
     }
@@ -474,8 +468,9 @@ public class Correspondence implements Documentable {
         this.isDuplicate = isDuplicate;
     }
 
+    @XmlJavaTypeAdapter(DateAdapter.class)
     @XmlElement(name = "lastStateChangeDate")
-    public void setLastStateChangeDate(String lastStateChangeDate) {
+    public void setLastStateChangeDate(Date lastStateChangeDate) {
         this.lastStateChangeDate = lastStateChangeDate;
     }
 
@@ -495,15 +490,13 @@ public class Correspondence implements Documentable {
     }
 
     @XmlRootElement(name = "legalOwner")
-    @PropertyClass(schema = "legalOwner", parent = "correspondence")
-    protected static class LegalOwner implements MultiComplex {
+    @PropertyClass(schema = "legalOwner")
+    protected static class LegalOwner implements MultiComplex<String, String> {
 
         @Nullable
-//        @Property(LEGAL_OWNER_PROP + "/0/designation")
         protected String designation;
 
         @Nullable
-//        @Property(LEGAL_OWNER_PROP + "/0/legalOwnerID")
         protected String legalOwnerID;
 
         @Nullable
@@ -538,7 +531,7 @@ public class Correspondence implements Documentable {
 
 
     @XmlRootElement(name = "external")
-    @PropertyClass(schema = "externalData", parent = "correspondence")
+    @PropertyClass(schema = "externalData")
     protected static class External {
 
         @Nullable
@@ -570,7 +563,7 @@ public class Correspondence implements Documentable {
     }
 
     @XmlRootElement(name = "fundInformation")
-    @PropertyClass(schema = "fundInformation", parent = "correspondence")
+    @PropertyClass(schema = "fundInformation")
     protected static class FundInformation {
 
         @Nullable
@@ -602,7 +595,7 @@ public class Correspondence implements Documentable {
     }
 
     @XmlRootElement(name = "recipient")
-    @PropertyClass(schema = "recipient", parent = "correspondence")
+    @PropertyClass(schema = "recipient")
     protected static class Recipient {
 
         @Nullable

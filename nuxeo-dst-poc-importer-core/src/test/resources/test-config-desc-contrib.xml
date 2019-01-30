@@ -5,8 +5,8 @@
              point="configuration">
 
     <configuration
-            wrapperClass="org.nuxeo.dst.importer.data.CorrespondencesWrapper"
-            class="org.nuxeo.dst.importer.data.Correspondence"
+            wrapperClass="org.nuxeo.dst.importer.model.CorrespondencesWrapper"
+            class="org.nuxeo.dst.importer.model.Correspondence"
             parent="/"/>
 
   </extension>

@@ -17,7 +17,7 @@
  * Contributors:
  *     anechaev
  */
-package org.nuxeo.dst.importer.data;
+package org.nuxeo.dst.importer.model;
 
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;

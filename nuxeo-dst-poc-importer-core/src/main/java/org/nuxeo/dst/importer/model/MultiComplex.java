@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2006-2018 Nuxeo (http://nuxeo.com/) and others.
+ * (C) Copyright 2006-2019 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,22 +17,11 @@
  * Contributors:
  *     anechaev
  */
-package org.nuxeo.dst.importer.data;
+package org.nuxeo.dst.importer.model;
 
-import java.io.Serializable;
 import java.util.Map;
 
-import org.nuxeo.dst.importer.exceptions.MissingFieldException;
+public interface MultiComplex<K, V> {
 
-public interface Documentable {
-
-    String getType();
-
-    void setDocumentPath(String path);
-
-    String getDocumentPath();
-
-    String getName();
-
-    Map<String, Serializable> getProperties() throws IllegalAccessException, MissingFieldException;
+    Map<K, V> toMap();
 }
